@@ -30,3 +30,17 @@
 *.exe
 *.out
 *.app
+
+.vs
+x64
+Debug
+Release
+*.html
+
+lib/glew-2.1.0/doc/
+
+lib/glfw-3.3.2/docs/html/
+
+lib/glm/doc/api/
+
+lib/glm/doc/
