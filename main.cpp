@@ -90,7 +90,7 @@ void init()
 
     //baseNode = new ManSatellite("models/ship/shipA_OBJ.obj", nullptr, 0, 0,10);
 
-    baseNode = new Planetoid("resources/2k_sun.jpg",  0,0,0, glm::vec3(10,10,10));
+    baseNode = new Planetoid("resources/2k_sun.png",  0,0,0, glm::vec3(10,10,10));
     ManSatellite* sat = new ManSatellite("models/ship/shipA_OBJ.obj", 30, 10,10, glm::vec3(0.01f, 0.01f,0.01f));
 
     Planetoid* moon = new Planetoid("test", 10, 100, 300,glm::vec3(1,1,1));
@@ -128,6 +128,10 @@ void draw()
 {
     glClearColor(0.3f, 0.4f, 0.6f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+
 
     tigl::shader->setProjectionMatrix(projectionMatrix);
     tigl::shader->setViewMatrix(camera->getMatrix());
@@ -139,6 +143,8 @@ void draw()
 
     tigl::shader->enableColor(true);
 
+    //tigl::shader->enableTexture(true);
+	
     glEnable(GL_DEPTH_TEST);
 
     baseNode->draw();
