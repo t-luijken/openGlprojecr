@@ -13,24 +13,84 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\SpaceNodes">
+      <UniqueIdentifier>{4029efd3-4047-4383-9530-bf83f41751b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\SpaceNodes">
+      <UniqueIdentifier>{24ecf8c2-b71e-4534-b199-ca6ec600175e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Helpers">
+      <UniqueIdentifier>{880d6790-e1df-4c9b-8a28-555a90aa0857}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Helpers">
+      <UniqueIdentifier>{da74dc34-12f2-4892-9d9c-de46faac75a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\scenes">
+      <UniqueIdentifier>{2683f4e2-f464-4d79-a222-88322b04b1c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Scenes">
+      <UniqueIdentifier>{3bdcef82-a068-45b3-98df-052bb69602b7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="tigl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SpaceNode.cpp">
+      <Filter>Source Files\SpaceNodes</Filter>
+    </ClCompile>
     <ClCompile Include="FpsCam.cpp">
+      <Filter>Source Files\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjModel.cpp">
+      <Filter>Source Files\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source Files\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="tigl.cpp">
+      <Filter>Source Files\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="ManSatellite.cpp">
+      <Filter>Source Files\SpaceNodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CachedModelLoader.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Planetoid.cpp">
+      <Filter>Source Files\SpaceNodes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="SpaceNode.hpp">
+      <Filter>Header Files\SpaceNodes</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjModel.h">
+      <Filter>Header Files\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_image.h">
+      <Filter>Header Files\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_include.h">
+      <Filter>Header Files\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Header Files\Helpers</Filter>
+    </ClInclude>
     <ClInclude Include="tigl.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Helpers</Filter>
     </ClInclude>
     <ClInclude Include="FpsCam.h">
+      <Filter>Header Files\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="ManSatellite.hpp">
+      <Filter>Header Files\SpaceNodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CachedModelLoader.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Planetoid.h">
+      <Filter>Header Files\SpaceNodes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
