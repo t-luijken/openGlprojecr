@@ -1,5 +1,7 @@
 ﻿#include "Planetoid.h"
 
+#include <iostream>
+
 #include "stb_image.h"
 #include "tigl.h"
 
@@ -20,19 +22,37 @@ glm::vec3 getXYZfromAngles(float phi, float theta)
     return glm::vec3(x, y, z);
 
 }
-GLuint texId;
 
-Planetoid::Planetoid(const char* textureLink,  float distance, float speed, float rotation_speed, glm::vec3 scale) : SpaceNode(speed, distance, rotation_speed, scale)
+glm::vec3 calculateNormal(glm::vec3 vect1, glm::vec3 vect2, glm::vec3 vect3)
 {
+    glm::vec3 U = vect2 - vect1;
+    glm::vec3 V = vect3 - vect1;
+
+    float normal_x = (U.y * V.z) - (U.z * V.y);
+    float normal_y = (U.z * V.x) - (U.x * V.z);
+    float normal_z = (U.x * V.y) - (U.y * V.x);
+
+    return glm::vec3(normal_x, normal_y, normal_z);
+
+	
+}
+
+
+Planetoid::Planetoid(std::string* textureLink, float rotation_speed, glm::vec3 scale, bool isSun) : SpaceNode(rotation_speed, scale)
+{
+    this->is_sun = isSun;
 
     glGenTextures(1, &texId);
     glBindTexture(GL_TEXTURE_2D, texId);
 	
 	
     int width, height, bpp;
+
+    char buffer[128];
+    strcpy_s(buffer, sizeof(*textureLink), (*textureLink).c_str());
 	
 	
-    char* imgData =(char*) stbi_load("resources/TEST_TEXTURE1.png", &width, &height, &bpp, 4);
+    char* imgData =(char*) stbi_load(buffer, &width, &height, &bpp, 4);
 	
     glTexImage2D(GL_TEXTURE_2D,
         0,
@@ -52,72 +72,78 @@ Planetoid::Planetoid(const char* textureLink,  float distance, float speed, floa
     stbi_image_free(imgData);
 
 	
-    for (int i = -180; i < 180; i += SCALE_FACTOR)
+    for (int longitude = 0; longitude < 180; longitude += SCALE_FACTOR)
     {
-       
+        float longRadians = glm::radians((float)longitude);
+
+        float longRadNext = longRadians + glm::radians((float)SCALE_FACTOR);
+
+        float iColorA = (longitude) / 180.0f;
+        float iColorB = (longitude + SCALE_FACTOR) / 180.0f;
+
     	
-        for (int j = 0; j < 180; j += SCALE_FACTOR)
+        for (int latitude = -180; latitude < 180; latitude += SCALE_FACTOR)
         {
 
+            float jColorA = (latitude + 180) / 360.0f;
+            float jColorB = (latitude + 180 + SCALE_FACTOR) / 360.0f;
+        	
+            float latRadians = glm::radians((float)latitude);
+
+            float latRadNext = latRadians + glm::radians((float)SCALE_FACTOR);
+        	
+            float x = sin(longRadians) * cos(latRadians);
+            float y = sin(longRadians) * sin(latRadians);
+            float z = cos(longRadians);
+
+            float x_next_long = sin(longRadNext) * cos(latRadians);
+            float y_next_long = sin(longRadNext) * sin(latRadians);
+            float z_next_long = cos(longRadNext);
+
+            float x_next_lat = sin(longRadians) * cos(latRadNext);
+            float y_next_lat = sin(longRadians) * sin(latRadNext);
+            float z_next_lat = cos(longRadians);
+
+            float x_next_both = sin(longRadNext) * cos(latRadNext);
+            float y_next_both = sin(longRadNext) * sin(latRadNext);
+            float z_next_both = cos(longRadNext);
+
+        	
             float Rand_red = ((float)(rand() % 255)) / 255.0f;
 
             float Rand_green = ((float)(rand() % 255)) / 255.0f;
 
             float Rand_blue = ((float)(rand() % 255)) / 255.0f;
 
+
+                glm::vec3 normal = calculateNormal(glm::vec3(x, z, y), glm::vec3(x_next_long, z_next_long, y_next_long), glm::vec3(x_next_lat, z_next_lat, y_next_lat));
+
+                    normal = normal * glm::vec3(-1, -1, -1);
+                
+
+                vertices.push_back(tigl::Vertex::PTN(glm::vec3(x, z, y), glm::vec2(jColorA, 1 - iColorA), normal));
+
+                vertices.push_back(tigl::Vertex::PTN(glm::vec3(x_next_long, z_next_long, y_next_long), glm::vec2(jColorA, 1 - iColorB), normal));
+
+                vertices.push_back(tigl::Vertex::PTN(glm::vec3(x_next_lat, z_next_lat, y_next_lat), glm::vec2(jColorB, 1 - iColorA), normal));
+
+
+                normal = calculateNormal(glm::vec3(x_next_both, z_next_both, y_next_both), glm::vec3(x_next_long, z_next_long, y_next_long), glm::vec3(x_next_lat, z_next_lat, y_next_lat));
+               
+                 //   normal = normal * glm::vec3(-1, -1, -1);
+                
+
+
+                vertices.push_back(tigl::Vertex::PTN(glm::vec3(x_next_long, z_next_long, y_next_long), glm::vec2(jColorA, 1 - iColorB), normal));
+
+                vertices.push_back(tigl::Vertex::PTN(glm::vec3(x_next_lat, z_next_lat, y_next_lat), glm::vec2(jColorB, 1 - iColorA), normal));
+
+                vertices.push_back(tigl::Vertex::PTN(glm::vec3(x_next_both, z_next_both, y_next_both), glm::vec2(jColorB, 1 - iColorB), normal));
+
+      
         	
-
-
-            vertices.push_back(tigl::Vertex::PC(getXYZfromAngles(glm::radians((float)i), glm::radians((float)j)),                                   glm::vec4((i+180)/360.0f, j/180.0f, 0, 1)));
-
-            vertices.push_back(tigl::Vertex::PC(getXYZfromAngles(glm::radians((float)(i + SCALE_FACTOR)), glm::radians((float)j)),                  glm::vec4((i + 180) / 360.0f, j / 180.0f, 0, 1)));
-
-            vertices.push_back(tigl::Vertex::PC(getXYZfromAngles(glm::radians((float)(i + SCALE_FACTOR)), glm::radians((float)(j + SCALE_FACTOR))), glm::vec4((i + 180) / 360.0f, j / 180.0f, 0, 1)));
-
-            vertices.push_back(tigl::Vertex::PC(getXYZfromAngles(glm::radians((float)i), glm::radians((float)(j + SCALE_FACTOR))),                  glm::vec4((i + 180) / 360.0f, j / 180.0f, 0, 1)));
-
-
-      /*
-        float texture_step_height = 1 / 360;
-        float texture_step_width = 1/180;
-           
-        vertices.push_back(tigl::Vertex::PT(getXYZfromAngles(glm::radians((float)i), glm::radians((float)j)),                                    glm::vec2(i * texture_step_height, j * texture_step_width)));
-
-        vertices.push_back(tigl::Vertex::PT(getXYZfromAngles(glm::radians((float)(i + SCALE_FACTOR)), glm::radians((float)j)),                   glm::vec2((i+1) * texture_step_height, j * texture_step_width)));
-
-        vertices.push_back(tigl::Vertex::PT(getXYZfromAngles(glm::radians((float)(i + SCALE_FACTOR)), glm::radians((float)(j + SCALE_FACTOR))),  glm::vec2((i + 1) * texture_step_height, (j+1) * texture_step_width)));
-
-        vertices.push_back(tigl::Vertex::PT(getXYZfromAngles(glm::radians((float)i), glm::radians((float)(j + SCALE_FACTOR))),                   glm::vec2(i * texture_step_height, (j + 1) * texture_step_width)));*/
-
-      /*      float h_offset = 1 / 360;
-            float w_offset = 1 / 180;
-
-            vertices.push_back(tigl::Vertex::PT(getXYZfromAngles(glm::radians((float)i), glm::radians((float)j)), glm::vec2(1, 0)));
-
-            vertices.push_back(tigl::Vertex::PT(getXYZfromAngles(glm::radians((float)(i + SCALE_FACTOR)), glm::radians((float)j)), glm::vec2(1, 1)));
-
-            vertices.push_back(tigl::Vertex::PT(getXYZfromAngles(glm::radians((float)(i + SCALE_FACTOR)), glm::radians((float)(j + SCALE_FACTOR))), glm::vec2(0, 1)));
-
-            vertices.push_back(tigl::Vertex::PT(getXYZfromAngles(glm::radians((float)i), glm::radians((float)(j + SCALE_FACTOR))), glm::vec2(0, 0)));*/
-
-
-        	
-          /*  float h_offset = (1.0f / (180.0f/SCALE_FACTOR))/4;
-            float w_offset = (1.0f / (360.0f/SCALE_FACTOR))/4;
-
-            float step_size = 1.0f / 144.0f;
-        	
-        	
-
-            vertices.push_back(tigl::Vertex::PT(getXYZfromAngles(glm::radians((float)i),glm::radians((float)j)),                                    glm::vec2((i * step_size), (j * step_size) )));
-
-            vertices.push_back(tigl::Vertex::PT(getXYZfromAngles(glm::radians((float)(i + SCALE_FACTOR)),glm::radians((float)j)),                   glm::vec2((i * step_size)+step_size, j * w_offset)));  
-
-            vertices.push_back(tigl::Vertex::PT(getXYZfromAngles(glm::radians((float)(i + SCALE_FACTOR)), glm::radians((float)(j + SCALE_FACTOR))), glm::vec2((i * step_size) + step_size, j * step_size)));
-        	
-            vertices.push_back(tigl::Vertex::PT(getXYZfromAngles(glm::radians((float)i), glm::radians((float)(j + SCALE_FACTOR))),                  glm::vec2((i * step_size), (j * step_size) + step_size)));*/
-            
-
+          
+      
         }
     }
 
@@ -134,22 +160,22 @@ void Planetoid::draw()
     glm::mat4 originalModelMatrix = tigl::shader->getModelMatrix();
     tigl::shader->setModelMatrix(originalModelMatrix * getModelMatrix());
 
-   // glBindTexture(GL_TEXTURE_2D, texId);
-    //glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, texId);
+    glEnable(GL_TEXTURE_2D);
 
-   // tigl::shader->enableTexture(true);
-    tigl::drawVertices(GL_QUADS, vbo);
-   // tigl::shader->enableTexture(false);
+    if (is_sun)
+    {
+        tigl::shader->enableLighting(false);
+    }
 	
-    tigl::shader->enableLighting(true);
-    tigl::shader->setLightCount(1);
+    tigl::shader->enableTexture(true);
+    tigl::drawVertices(GL_TRIANGLES, vbo);
+    tigl::shader->enableTexture(false);
 
-    tigl::shader->setLightDirectional(0, false);
-    tigl::shader->setLightPosition(0, glm::vec3(1, 2, 3));
-    tigl::shader->setLightAmbient(0, glm::vec3(0.1f, 0.1f, 0.15f));
-    tigl::shader->setLightDiffuse(0, glm::vec3(0.8f, 0.8f, 0.8f));
-    tigl::shader->setLightSpecular(0, glm::vec3(0, 0, 0));
-    tigl::shader->setShinyness(32.0f);
+    tigl::shader->enableLighting(true);
+
+    
+
 
 
     tigl::shader->setModelMatrix(originalModelMatrix);

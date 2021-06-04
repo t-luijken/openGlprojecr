@@ -7,6 +7,8 @@ class SpaceNode
 {
 
 protected:
+
+	
 	SpaceNode* orbit_object;
 	glm::vec3 position;
 	glm::vec3 rotationAngles;
@@ -24,10 +26,12 @@ protected:
 	glm::mat4 getModelMatrix();
 
 public:
-	SpaceNode(float speed, float distance, float rotation_speed, glm::vec3 scale);
+	SpaceNode(float rotation_speed, glm::vec3 scale);
 	virtual void draw() = 0;
 	void update(double timeMillis);
-	void add_sat(SpaceNode* sat);
+	void add_sat(SpaceNode* sat, float distance, float speed);
 	void set_orbit(SpaceNode* node);
+	void set_orbit_speed(float rotation_speed);
+	void set_distance(float distance);
 	
 };

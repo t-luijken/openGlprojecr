@@ -166,6 +166,7 @@
     <ClCompile Include="ObjModel.cpp" />
     <ClCompile Include="Planetoid.cpp" />
     <ClCompile Include="SpaceNode.cpp" />
+    <ClCompile Include="SpaceShip.cpp" />
     <ClCompile Include="src\CachedModelLoader.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="tigl.cpp" />
@@ -174,8 +175,10 @@
     <ClInclude Include="FpsCam.h" />
     <ClInclude Include="ManSatellite.hpp" />
     <ClInclude Include="ObjModel.h" />
+    <ClInclude Include="particle.h" />
     <ClInclude Include="Planetoid.h" />
     <ClInclude Include="SpaceNode.hpp" />
+    <ClInclude Include="SpaceShip.h" />
     <ClInclude Include="src\CachedModelLoader.hpp" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="stb_include.h" />

@@ -1,12 +1,15 @@
 ﻿#pragma once
 #include <string>
+#include <GL/glew.h>
 
 #include "SpaceNode.hpp"
 
 class Planetoid : public SpaceNode
 {
+	bool is_sun;
+	GLuint texId;
 public:
-	Planetoid(const char* textureLink, float distance, float speed, float rotation_speed, glm::vec3 scale);
+	Planetoid(std::string* textureLink, float rotation_speed, glm::vec3 scale, bool isSun);
 
 	void draw() override;
 	

@@ -3,7 +3,7 @@
 #include "tigl.h"
 
 
-ManSatellite::ManSatellite(std::string model_file_name,  float distance, float speed, float rotation_speed, glm::vec3 scale) : SpaceNode( speed, distance, rotation_speed, scale)
+ManSatellite::ManSatellite(std::string model_file_name, float rotation_speed, glm::vec3 scale) : SpaceNode( rotation_speed, scale)
 {
 	this->model = new ObjModel(model_file_name);
 }

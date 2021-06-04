@@ -54,11 +54,14 @@
     <ClCompile Include="ManSatellite.cpp">
       <Filter>Source Files\SpaceNodes</Filter>
     </ClCompile>
-    <ClCompile Include="src\CachedModelLoader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Planetoid.cpp">
       <Filter>Source Files\SpaceNodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CachedModelLoader.cpp">
+      <Filter>Source Files\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="SpaceShip.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -86,11 +89,17 @@
     <ClInclude Include="ManSatellite.hpp">
       <Filter>Header Files\SpaceNodes</Filter>
     </ClInclude>
-    <ClInclude Include="src\CachedModelLoader.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Planetoid.h">
       <Filter>Header Files\SpaceNodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CachedModelLoader.hpp">
+      <Filter>Header Files\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="SpaceShip.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="particle.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
