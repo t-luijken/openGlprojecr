@@ -5,7 +5,7 @@
 #include "stb_image.h"
 #include "tigl.h"
 
-#define SCALE_FACTOR 5
+#define SCALE_FACTOR 3
 
 const float PI = (2 * acos(0.0));
 
@@ -38,7 +38,7 @@ glm::vec3 calculateNormal(glm::vec3 vect1, glm::vec3 vect2, glm::vec3 vect3)
 }
 
 
-Planetoid::Planetoid(std::string* textureLink, float rotation_speed, glm::vec3 scale, bool isSun) : SpaceNode(rotation_speed, scale)
+Planetoid::Planetoid(std::string name, std::string* textureLink, float rotation_speed, glm::vec3 scale, bool isSun) : SpaceNode(name,rotation_speed, scale)
 {
     this->is_sun = isSun;
 
@@ -130,7 +130,7 @@ Planetoid::Planetoid(std::string* textureLink, float rotation_speed, glm::vec3 s
 
                 normal = calculateNormal(glm::vec3(x_next_both, z_next_both, y_next_both), glm::vec3(x_next_long, z_next_long, y_next_long), glm::vec3(x_next_lat, z_next_lat, y_next_lat));
                
-                 //   normal = normal * glm::vec3(-1, -1, -1);
+                  //  normal = normal * glm::vec3(-1, -1, -1);
                 
 
 

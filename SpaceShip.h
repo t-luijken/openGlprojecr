@@ -21,5 +21,11 @@ namespace spaceShip
 	void ship_left_release();
 	void ship_right();
 	void ship_right_release();
+
+	void on_press_shift();
+	void on_release_shift();
+
+	void on_press_control();
+	void on_release_control();
 }
 

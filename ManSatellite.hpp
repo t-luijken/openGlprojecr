@@ -7,7 +7,7 @@ class ManSatellite : public SpaceNode
 private:
 	 ObjModel* model;
 public:
-	ManSatellite(std::string model_file_name, float rotation_speed, glm::vec3 scale);
+	ManSatellite(std::string name, std::string model_file_name, float rotation_speed, glm::vec3 scale);
 	
 	void draw() override;
 

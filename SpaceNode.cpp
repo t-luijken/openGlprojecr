@@ -4,9 +4,9 @@
 #include <glm/ext/matrix_transform.hpp>
 
 
-SpaceNode::SpaceNode(  float rotation_speed, glm::vec3 scale)
+SpaceNode::SpaceNode(std::string name,  float rotation_speed, glm::vec3 scale)
 {
-	
+	this->name = name;
 
 	this->rotation_speed = rotation_speed;
 	this->scale = scale;
@@ -88,3 +88,17 @@ void SpaceNode::set_distance(float distance)
 }
 
 
+std::string SpaceNode::get_name()
+{
+	return this->name;
+}
+
+glm::vec3 SpaceNode::get_position()
+{
+	return position;
+}
+
+glm::vec3 SpaceNode::get_rotation()
+{
+	return rotationAngles;
+}

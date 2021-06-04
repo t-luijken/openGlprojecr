@@ -18,17 +18,22 @@ namespace spaceShip
 
 	float roll_angle;
 
-	float roll_speed = 50;
+	float roll_speed = 200;
 	
 
 	
 	Particle* CircularParticleArray[256];
 	int arrayPoint = 0;
 	
-	bool buttonsPressed[4];
+	bool buttonsPressed[6];
 
-	float rotationSpeed = 200;
-	float flightSpeed = 50;
+	float rotation_acceleration = 200;
+	float rotationSpeed = 0;
+
+	float flight_acceleration = 50;
+	float flightSpeed = 0;
+
+	
 	float enginedistance = 2.0f;
 
 	glm::mat4 getModelMatrix()
@@ -36,10 +41,13 @@ namespace spaceShip
 		glm::mat4 modelMatrix(1.0f);
 		modelMatrix = glm::translate(modelMatrix, position);
 
+		modelMatrix = glm::rotate(modelMatrix, glm::radians(rotationAngles[1]), glm::vec3(0, 1, 0));
 
 		modelMatrix = glm::rotate(modelMatrix, glm::radians(rotationAngles[0]), glm::vec3(1, 0, 0));
-		modelMatrix = glm::rotate(modelMatrix, glm::radians(rotationAngles[1]), glm::vec3(0, 1, 0));
+		
 		modelMatrix = glm::rotate(modelMatrix, glm::radians(rotationAngles[2]), glm::vec3(0, 0, 1));
+
+	
 		
 		modelMatrix = glm::scale(modelMatrix, scale);
 		return modelMatrix;
@@ -197,7 +205,8 @@ namespace spaceShip
 
 			float engineX = sin(glm::radians(rotationAngles[1])) * (enginedistance);
 			float engineZ = cos(glm::radians(rotationAngles[1])) * (enginedistance);
-			glm::vec3 engineOffset(engineX, 0, engineZ);
+			float engineY = sin(glm::radians(rotationAngles[0])) * -(enginedistance);
+			glm::vec3 engineOffset(engineX, engineY, engineZ);
 
 			glm::vec3 pPosition = position;
 
@@ -221,29 +230,52 @@ namespace spaceShip
 		
 		if (buttonsPressed[0])
 		{
-			float x = sin(glm::radians(rotationAngles[1])) * (flightSpeed*timeMillis);
-			float z = cos(glm::radians(rotationAngles[1])) * (flightSpeed*timeMillis);
-			glm::vec3 offset(x, 0, z);
-
-			position -= offset;
-
-			
-
-		
+			if (flightSpeed < 50)
+			{
+				flightSpeed += flight_acceleration * timeMillis;
+			}
 		}
 		if (buttonsPressed[1])
 		{
-			float x = sin(glm::radians(rotationAngles[1])) * (flightSpeed*timeMillis);
-			float z = cos(glm::radians(rotationAngles[1])) * (flightSpeed*timeMillis);
-			glm::vec3 offset(x, 0, z);
+			if (flightSpeed > -50)
+			{
+				flightSpeed -= flight_acceleration * timeMillis;
+			}
+		}
+		
 
-			position += offset;
 
+
+		if (!(buttonsPressed[0]) && !(buttonsPressed[1]))
+		{
+
+			if (flightSpeed > 0.05f)
+			{
+				flightSpeed -= (flight_acceleration / 2.0f) * timeMillis;
+			}
+			if (flightSpeed < -0.05f)
+			{
+				flightSpeed += (flight_acceleration / 2.0f) * timeMillis;
+			}
 		}
 
+		float x = sin(glm::radians(rotationAngles[1])) * (flightSpeed * timeMillis);
+		float z = cos(glm::radians(rotationAngles[1])) * (flightSpeed * timeMillis);
+		float y = sin(glm::radians(rotationAngles[0])) * (flightSpeed * timeMillis);
+		glm::vec3 offset(x, -y, z);
+
+		position -= offset;
+
+		
 		if (buttonsPressed[2])
 		{
-			rotationAngles[1] += rotationSpeed * timeMillis;
+			if (rotationSpeed < 200)
+			{
+				rotationSpeed += rotation_acceleration * timeMillis;
+			}
+
+			
+			
 
 
 			if (rotationAngles[2] < 90)
@@ -255,8 +287,12 @@ namespace spaceShip
 		}
 		if (buttonsPressed[3])
 		{
-			rotationAngles[1] -= rotationSpeed * timeMillis;
 
+			if (rotationSpeed > -200)
+			{
+				rotationSpeed -= rotation_acceleration * timeMillis;
+			}
+			
 
 			if (rotationAngles[2] > -90)
 			{
@@ -265,18 +301,64 @@ namespace spaceShip
 			
 		}
 
+		rotationAngles[1] += rotationSpeed * timeMillis;
+
 		if (!(buttonsPressed[2])&&!(buttonsPressed[3]))
 		{
 
+
+			if (rotationSpeed > 0.05f)
+			{
+				rotationSpeed -= (roll_speed / 2.0f) * timeMillis;
+			}
+			if (rotationSpeed < -0.05f)
+			{
+				rotationSpeed += (roll_speed / 2.0f) * timeMillis;
+			}
+
+			
 			if (rotationAngles[2] > 0.05f)
 			{
-				rotationAngles[2] -= roll_speed * 2.0f *timeMillis;
+				rotationAngles[2] -= (roll_speed /2.0f) *timeMillis;
 			}
 			if (rotationAngles[2] < -0.05f)
 			{
-				rotationAngles[2] += roll_speed *2.0f *timeMillis;
+				rotationAngles[2] += (roll_speed /2.0f) *timeMillis;
 			}
 		}
+
+		
+		if (buttonsPressed[4])
+		{
+			if (rotationAngles[0] < 45)
+			{
+				rotationAngles[0] += roll_speed * timeMillis;
+			}
+			
+		}
+
+		if (buttonsPressed[5])
+		{
+			if (rotationAngles[0] > -45)
+			{
+				rotationAngles[0] -= roll_speed * timeMillis;
+			}
+			
+		}
+
+		if (!(buttonsPressed[4]) && !(buttonsPressed[5]))
+		{
+
+			if (rotationAngles[0] > 0.05f)
+			{
+				rotationAngles[0] -= (roll_speed / 2.0f) * timeMillis;
+			}
+			if (rotationAngles[0] < -0.05f)
+			{
+				rotationAngles[0] += (roll_speed / 2.0f) * timeMillis;
+			}
+		}
+
 		
 
 		for (Particle *particle : CircularParticleArray)
@@ -296,4 +378,26 @@ namespace spaceShip
 		}
 		
 	}
+}
+
+
+void spaceShip::on_press_shift()
+{
+	buttonsPressed[4] = true;
+}
+
+void spaceShip::on_release_shift()
+{
+	buttonsPressed[4] = false;
+	
+}
+
+void spaceShip::on_press_control()
+{
+	buttonsPressed[5] = true;
+}
+
+void spaceShip::on_release_control()
+{
+	buttonsPressed[5] = false;
 }

@@ -10,6 +10,9 @@
 #include "Planetoid.h"
 #include "SpaceShip.h"
 #include "stb_image.h"
+#include "src/imgui.h"
+#include "src/imgui_impl_glfw.h"
+#include "src/imgui_impl_opengl3.h"
 
 using tigl::Vertex;
 
@@ -33,7 +36,11 @@ static float rotation = 0;
 
 SpaceNode* baseNode;
 ObjModel* obj_model;
+SpaceNode* selectedNode = nullptr;
 
+bool show_demo_window = true;
+bool show_another_window = false;
+ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 glm::vec3 cameraPosition;
 
@@ -41,10 +48,13 @@ float cameraDistance = 10;
 
 void generateBackGroundImage();
 
+std::list<SpaceNode*> space_nodes;
+
 
 int main(void)
 {
 
+	
     init();
 
 	while (!glfwWindowShouldClose(window))
@@ -63,13 +73,18 @@ int main(void)
 		
 	}
 
-	glfwTerminate();
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+
+    glfwDestroyWindow(window);
+    glfwTerminate();
 
 
     return 0;
 }
 
-FpsCam* camera;
+
 glm::uint textureID;
 
 
@@ -80,6 +95,7 @@ void init()
     if (!glfwInit())
         throw "Could not initialize glwf";
     window = glfwCreateWindow(1920, 1080, "SpaceSim", NULL, NULL);
+    glfwMakeContextCurrent(window);
     if (!window)
     {
         glfwTerminate();
@@ -144,60 +160,109 @@ void init()
                     spaceShip::ship_backwards_release();
                 }
             }
+            if (key == GLFW_KEY_LEFT_SHIFT)
+            {
+                if (action == GLFW_PRESS)
+                {
+                    spaceShip::on_press_shift();
+                }
+                else if (action == GLFW_RELEASE)
+                {
+                    spaceShip::on_release_shift();
+                }
+            }
+            if (key == GLFW_KEY_LEFT_CONTROL)
+            {
+                if (action == GLFW_PRESS)
+                {
+                    spaceShip::on_press_control();
+                }
+                else if (action == GLFW_RELEASE)
+                {
+                    spaceShip::on_release_control();
+                }
+            }
         });
     
 
     //baseNode = new ManSatellite("models/ship/shipA_OBJ.obj", nullptr, 0, 0,10);
 
-    std::string sunTexture = "resources/2k_sun.png";
-    baseNode = new Planetoid(&sunTexture,0, glm::vec3(10,10,10), true);
+    std::string sunTexture = "resources/8k_sun.png";
+    baseNode = new Planetoid("sun",&sunTexture,0, glm::vec3(10,10,10), true);
 
+   // baseNode = new ManSatellite("models/monkey/monkey.obj", 10, glm::vec3(1, 1, 1));
+	
     std::string mercureyTexture = "resources/8k_mercury.png";
-    Planetoid* mercury = new Planetoid(&mercureyTexture,24, glm::vec3(1, 1, 1), false);
+    Planetoid* mercury = new Planetoid("mercury", &mercureyTexture,24, glm::vec3(1, 1, 1), false);
 
     std::string venusTexture = "resources/8k_venus_surface.png";
-    Planetoid* venus = new Planetoid(&venusTexture, 48, glm::vec3(1, 1, 1), false);
+    Planetoid* venus = new Planetoid("venus",&venusTexture, 48, glm::vec3(1, 1, 1), false);
 
     std::string marsTexture = "resources/2k_mars.png";
-    Planetoid* mars = new Planetoid(&marsTexture, 48, glm::vec3(1, 1, 1), false);
+    Planetoid* mars = new Planetoid("mars",&marsTexture, 48, glm::vec3(1, 1, 1), false);
 
     std::string earthTexture = "resources/2k_earth_daymap.png";
-    Planetoid* earth = new Planetoid(&earthTexture, 48, glm::vec3(1, 1, 1), false);
+    Planetoid* earth = new Planetoid("earth",&earthTexture, 48, glm::vec3(1, 1, 1), false);
 
     std::string moonTexture = "resources/2k_moon.png";
-    Planetoid* moon = new Planetoid(&moonTexture,  48, glm::vec3(0.3f, 0.3f, 0.3f), false);
-
+    Planetoid* moon = new Planetoid("moon",&moonTexture,  48, glm::vec3(0.3f, 0.3f, 0.3f), false);
+	 
+    ManSatellite* mSatellite = new ManSatellite("mSatellite","models/sat/sat.obj", 120, glm::vec3(0.5f, 0.5f, 0.5f));
+	
 	
     std::string jupiterTexture = "resources/2k_jupiter.png";
-    Planetoid* jupiter = new Planetoid(&jupiterTexture, 48, glm::vec3(3, 3, 3), false);
+    Planetoid* jupiter = new Planetoid("jupiter",&jupiterTexture, 48, glm::vec3(3, 3, 3), false);
+
+    std::string jmoonTexture = "resources/2k_moon.png";
+    Planetoid* jmoon = new Planetoid("jmoon", &jmoonTexture, 48, glm::vec3(0.3f, 0.3f, 0.3f), false);
+
+	
+
+    ManSatellite* jSattelite = new ManSatellite("jSattelite","models/sat/sat.obj", 120, glm::vec3(1, 1, 1));
 
     std::string saturnTexture = "resources/2k_saturn.png";
-    Planetoid* saturn = new Planetoid(&saturnTexture, 48, glm::vec3(2, 2, 2), false);
+    Planetoid* saturn = new Planetoid("saturn",&saturnTexture, 48, glm::vec3(2, 2, 2), false);
 
     std::string uranusTexture = "resources/2k_uranus.png";
-    Planetoid* uranus = new Planetoid(&uranusTexture, 48, glm::vec3(2, 2, 2), false);
+    Planetoid* uranus = new Planetoid("uranus",&uranusTexture, 48, glm::vec3(2, 2, 2), false);
 	
 	
     std::string neptuneTexture = "resources/2k_neptune.png";
-    Planetoid* neptune = new Planetoid(&neptuneTexture, 48, glm::vec3(2, 2, 2), false);
+    Planetoid* neptune = new Planetoid("neptune",&neptuneTexture, 48, glm::vec3(2, 2, 2), false);
 
 
-    baseNode->add_sat(mercury,20, 100);
-    baseNode->add_sat(venus, 30, 70);
-    baseNode->add_sat(mars, 40, 50);
-    baseNode->add_sat(earth, 50, 30);
+    baseNode->add_sat(mercury,40, 97);
+    baseNode->add_sat(venus, 60, 73);
+    baseNode->add_sat(mars, 80, 53);
+    baseNode->add_sat(earth, 100, 29);
 
-    earth->add_sat(moon, 5, 100 );
+    earth->add_sat(moon, 7, 89 );
+    moon->add_sat(mSatellite, 1, 120);
 	
-    baseNode->add_sat(jupiter, 70, 20);
-    baseNode->add_sat(saturn, 80, 10);
-    baseNode->add_sat(uranus, 90, 7);
-    baseNode->add_sat(neptune, 100, 3);
+    baseNode->add_sat(jupiter, 140, 23);
+    jupiter->add_sat(jSattelite,5,120);
+    jupiter->add_sat(jmoon, 10, 200);
+	
+    baseNode->add_sat(saturn, 160, 11);
+    baseNode->add_sat(uranus, 180, 7);
+    baseNode->add_sat(neptune, 200, 3);
 
-
+    space_nodes.push_back(baseNode);
+    space_nodes.push_back(mercury);
+    space_nodes.push_back(venus);
+    space_nodes.push_back(mars);
+    space_nodes.push_back(earth);
+    space_nodes.push_back(moon);
+    space_nodes.push_back(mSatellite);
+    space_nodes.push_back(jupiter);
+    space_nodes.push_back(jSattelite);
+    space_nodes.push_back(jmoon);
+    space_nodes.push_back(saturn);
+    space_nodes.push_back(uranus);
+    space_nodes.push_back(neptune);
+    
 	
 
-    camera = new FpsCam(window);
 	
     int viewport[4];
     glGetIntegerv(GL_VIEWPORT, viewport);
@@ -205,23 +270,76 @@ void init()
     viewMatrix = glm::lookAt(CAMERA_POS, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 
     rotation = 0;
+
+
+    // Decide GL+GLSL versions
+#if defined(IMGUI_IMPL_OPENGL_ES2)
+    // GL ES 2.0 + GLSL 100
+    const char* glsl_version = "#version 100";
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
+#elif defined(__APPLE__)
+    // GL 3.2 + GLSL 150
+    const char* glsl_version = "#version 150";
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // Required on Mac
+#else
+    // GL 3.0 + GLSL 130
+    const char* glsl_version = "#version 130";
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+    //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
+    //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
+#endif
+
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+
+    ImGui::StyleColorsDark();
+	
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init(glsl_version);
+    
+	
 }
 
 
 void update(float timeMillis)
 {
-    camera->update(window);
+    glfwPollEvents();
     baseNode->update(timeMillis);
     spaceShip::update_ship(timeMillis);
 
-    glm::vec3 rotationAngles = spaceShip::getShipRotation();
-	
-    float x = sin(glm::radians(rotationAngles[1])) * (cameraDistance);
-    float z = cos(glm::radians(rotationAngles[1])) * (cameraDistance);
-    glm::vec3 offset(x, 5, z);
-    offset += spaceShip::getShipPosition();
+   
 
-    cameraPosition = offset;
+
+    if (!selectedNode)
+    {
+        glm::vec3 rotationAngles = spaceShip::getShipRotation();
+
+        float x = sin(glm::radians(rotationAngles[1])) * (cameraDistance);
+        float z = cos(glm::radians(rotationAngles[1])) * (cameraDistance);
+        glm::vec3 offset(x, 5, z);
+        offset += spaceShip::getShipPosition();
+        cameraPosition = offset;
+        viewMatrix = glm::lookAt(cameraPosition, spaceShip::getShipPosition(), glm::vec3(0, 1, 0));
+    }
+    else
+    {
+        glm::vec3 rotationAngles = selectedNode->get_rotation();
+
+        float x = sin((rotationAngles[1])) * (cameraDistance);
+        float z = cos((rotationAngles[1])) * (cameraDistance);
+        glm::vec3 offset(x, 5, z);
+        offset += selectedNode->get_position();
+        cameraPosition = offset;
+    	
+        viewMatrix = glm::lookAt(cameraPosition, selectedNode->get_position(), glm::vec3(0, 1, 0));
+    }
 	
 }
 GLuint textureId;
@@ -274,8 +392,16 @@ void draw()
      tigl::shader->setViewMatrix(glm::lookAt(glm::vec3(0,0,7),glm::vec3(0,0,0),glm::vec3(0,1,0)));
      glBindTexture(GL_TEXTURE_2D, textureId);
 
-
-     float angle = spaceShip::getShipRotation()[1];
+     float angle;
+	
+    if (!selectedNode)
+    {
+         angle = spaceShip::getShipRotation()[1];
+    }else
+    {
+        angle = glm::degrees( selectedNode->get_rotation()[1]);
+    }
+    
 	
      float leftBound = angle - (fov / 2);
      float righBound = angle + (fov / 2);
@@ -299,10 +425,10 @@ void draw()
 
     tigl::shader->setProjectionMatrix(projectionMatrix);
     tigl::shader->setViewMatrix(viewMatrix);
-	
-	
 
-    viewMatrix = glm::lookAt(cameraPosition, spaceShip::getShipPosition(), glm::vec3(0, 1, 0));
+
+    
+	
 
     //glEnable(GL_NORMALIZE);
 	
@@ -333,7 +459,37 @@ void draw()
 
     baseNode->draw();
     spaceShip::draw_ship();
- 
 
+    glfwPollEvents();
+
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+    static float f = 0.0f;
+    static int counter = 0;
+
+	
+    ImGui::Begin("select a planet to view"); 
+    if (ImGui::Button("spaceShip"))
+    {
+        selectedNode = nullptr;
+    }                            // Buttons ret
+
+    for (SpaceNode* space_node : space_nodes)
+    {
+        if (ImGui::Button(space_node->get_name().c_str()))
+        {
+            selectedNode = space_node;
+        }                            // Buttons return true when clicked (most widgets return true when edited/activated)
+    }
+    
+    ImGui::End();
+
+    ImGui::Render();
+    
+  
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+	
 }
 

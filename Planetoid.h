@@ -9,7 +9,7 @@ class Planetoid : public SpaceNode
 	bool is_sun;
 	GLuint texId;
 public:
-	Planetoid(std::string* textureLink, float rotation_speed, glm::vec3 scale, bool isSun);
+	Planetoid(std::string name, std::string* textureLink, float rotation_speed, glm::vec3 scale, bool isSun);
 
 	void draw() override;
 	
