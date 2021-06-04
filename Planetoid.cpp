@@ -5,7 +5,7 @@
 #include "stb_image.h"
 #include "tigl.h"
 
-#define SCALE_FACTOR 3
+#define SCALE_FACTOR 10
 
 const float PI = (2 * acos(0.0));
 
@@ -35,6 +35,17 @@ glm::vec3 calculateNormal(glm::vec3 vect1, glm::vec3 vect2, glm::vec3 vect3)
     return glm::vec3(normal_x, normal_y, normal_z);
 
 	
+}
+bool contains_vertex_with_same_position(std::vector<tigl::Vertex*>* list, tigl::Vertex* vertexPos)
+{
+	for (tigl::Vertex* vertex : *list)
+	{
+		if (vertex->position == vertexPos->position)
+		{
+            return true;
+		}
+	}
+    return false;
 }
 
 
@@ -71,6 +82,8 @@ Planetoid::Planetoid(std::string name, std::string* textureLink, float rotation_
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     stbi_image_free(imgData);
 
+
+  
 	
     for (int longitude = 0; longitude < 180; longitude += SCALE_FACTOR)
     {
@@ -80,6 +93,11 @@ Planetoid::Planetoid(std::string name, std::string* textureLink, float rotation_
 
         float iColorA = (longitude) / 180.0f;
         float iColorB = (longitude + SCALE_FACTOR) / 180.0f;
+
+
+
+    	
+     
 
     	
         for (int latitude = -180; latitude < 180; latitude += SCALE_FACTOR)
@@ -118,18 +136,24 @@ Planetoid::Planetoid(std::string name, std::string* textureLink, float rotation_
 
                 glm::vec3 normal = calculateNormal(glm::vec3(x, z, y), glm::vec3(x_next_long, z_next_long, y_next_long), glm::vec3(x_next_lat, z_next_lat, y_next_lat));
 
-                    normal = normal * glm::vec3(-1, -1, -1);
+        		
+
+                normal = normal * glm::vec3(-1, -1, -1);
+
                 
 
                 vertices.push_back(tigl::Vertex::PTN(glm::vec3(x, z, y), glm::vec2(jColorA, 1 - iColorA), normal));
-
+              
                 vertices.push_back(tigl::Vertex::PTN(glm::vec3(x_next_long, z_next_long, y_next_long), glm::vec2(jColorA, 1 - iColorB), normal));
 
                 vertices.push_back(tigl::Vertex::PTN(glm::vec3(x_next_lat, z_next_lat, y_next_lat), glm::vec2(jColorB, 1 - iColorA), normal));
 
 
                 normal = calculateNormal(glm::vec3(x_next_both, z_next_both, y_next_both), glm::vec3(x_next_long, z_next_long, y_next_long), glm::vec3(x_next_lat, z_next_lat, y_next_lat));
-               
+
+        		
+
+        	
                   //  normal = normal * glm::vec3(-1, -1, -1);
                 
 
@@ -139,14 +163,50 @@ Planetoid::Planetoid(std::string name, std::string* textureLink, float rotation_
                 vertices.push_back(tigl::Vertex::PTN(glm::vec3(x_next_lat, z_next_lat, y_next_lat), glm::vec2(jColorB, 1 - iColorA), normal));
 
                 vertices.push_back(tigl::Vertex::PTN(glm::vec3(x_next_both, z_next_both, y_next_both), glm::vec2(jColorB, 1 - iColorB), normal));
-
-      
-        	
-          
-      
         }
     }
 
+    std::vector<tigl::Vertex*> calculated;
+
+	
+    for (int i = 0; i < vertices.size(); ++i)
+    {
+	    if (!contains_vertex_with_same_position(&calculated,&vertices[i]))
+	    {
+            glm::vec3 position = vertices[i].position;
+            calculated.push_back(&vertices[i]);
+
+            std::vector<tigl::Vertex*> samePos;
+            samePos.push_back(&vertices[i]);
+
+            int total = 1;
+
+            glm::vec3 newNormal(0.0f, 0.0f, 0.0f);
+
+            newNormal + vertices[i].normal;
+
+	    	
+            for (int j = 0; j < vertices.size(); ++j)
+            {
+	            if ((i != j)&&(vertices[j].position==position))
+	            {
+	            	
+                    samePos.push_back(&vertices[j]);
+                    newNormal += vertices[j].position;
+                    total++;
+	            }
+            }
+	    	
+            newNormal /= glm::vec3(total,total,total);
+
+            for (int j = 0; j < samePos.size(); ++j)
+            {
+                samePos[j]->normal = newNormal;
+            }
+ 	
+	    } 	
+    }
+	
     
     vbo = tigl::createVbo(vertices);
 	
