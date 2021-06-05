@@ -280,23 +280,29 @@ void Planetoid::draw()
 
     if (has_rings)
     {
-        glBindTexture(GL_TEXTURE_2D, rTexID);
-        
-        tigl::shader->enableTexture(true);
-    	
-        tigl::begin(GL_QUADS);
-        tigl::addVertex(tigl::Vertex::PTN(glm::vec3(-2, -0.1f, -2), glm::vec2(0, 0), glm::vec3(0,1,0)));
+	 
+	    
+
+            glBindTexture(GL_TEXTURE_2D, rTexID);
+
+            tigl::shader->enableTexture(true);
+
+            tigl::begin(GL_QUADS);
+            tigl::addVertex(tigl::Vertex::PTN(glm::vec3(-2, -0.1f, -2), glm::vec2(0, 0), glm::vec3(0, 1, 0)));
 
 
-        tigl::addVertex(tigl::Vertex::PTN(glm::vec3(2, 0, -2), glm::vec2(1, 0), glm::vec3(0, 1, 0)));
+            tigl::addVertex(tigl::Vertex::PTN(glm::vec3(2, 0, -2), glm::vec2(1, 0), glm::vec3(0, 1, 0)));
 
-        tigl::addVertex(tigl::Vertex::PTN(glm::vec3(2, 0.1f, 2), glm::vec2(1, 1), glm::vec3(0, 1, 0)));
+            tigl::addVertex(tigl::Vertex::PTN(glm::vec3(2, 0.1f, 2), glm::vec2(1, 1), glm::vec3(0, 1, 0)));
 
-        tigl::addVertex(tigl::Vertex::PTN(glm::vec3(-2, 0, 2), glm::vec2(0, 1), glm::vec3(0, 1, 0)));
+            tigl::addVertex(tigl::Vertex::PTN(glm::vec3(-2, 0, 2), glm::vec2(0, 1), glm::vec3(0, 1, 0)));
 
-        tigl::end();
+            tigl::end();
 
-        tigl::shader->enableTexture(false);
+            tigl::shader->enableTexture(false);
+	    
+
+    
     	
     	
     }
@@ -335,4 +341,14 @@ void Planetoid::draw()
     }
 	
 	
+}
+
+bool* Planetoid::p_get_has_rings()
+{
+    return &has_rings;
+}
+
+bool* Planetoid::p_get_is_sun()
+{
+    return &is_sun;
 }

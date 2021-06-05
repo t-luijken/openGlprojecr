@@ -38,8 +38,6 @@ SpaceNode* baseNode;
 ObjModel* obj_model;
 SpaceNode* selectedNode = nullptr;
 
-bool show_demo_window = true;
-bool show_another_window = false;
 ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 float time_multiplier = 1;
 
@@ -65,8 +63,8 @@ int main(void)
         double deltaTime = currentTime - lastTime;
         lastTime = currentTime;
 
-      //  std::cout << "fps:";
-       // std::cout << 1.0f/deltaTime<<std::endl;
+       // std::cout << "fps:";
+       //std::cout << 1.0f/deltaTime<<std::endl;
 		
 		update(deltaTime);
 		draw();
@@ -107,11 +105,17 @@ ManSatellite* generateSattelite(std::string name, std::string model_file_name, f
     return satellite;
 }
 
+void window_size_callback(GLFWwindow* nwindow, int width, int height)
+{
+    glViewport(0, 0, width, height);
+}
+
 
 void init()
 {
     if (!glfwInit())
         throw "Could not initialize glwf";
+  
     window = glfwCreateWindow(1920, 1080, "SpaceSim", NULL, NULL);
     glfwMakeContextCurrent(window);
     if (!window)
@@ -121,6 +125,8 @@ void init()
     }
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
+
+    glfwSetWindowSizeCallback(window, window_size_callback);
 
     std::cout << glGetString(GL_VERSION) << std::endl;
 
@@ -208,9 +214,9 @@ void init()
 
     baseNode = generatePlanet("resources/8k_sun.png", "sun", 0, glm::vec3(10, 10, 10), true, false);
 
-    Planetoid* mercury = generatePlanet("resources/8k_mercury.png", "mercury", 24, glm::vec3(1, 1, 1), false, false);
+    Planetoid* mercury = generatePlanet("resources/2k_mercury.png", "mercury", 24, glm::vec3(1, 1, 1), false, false);
 
-    Planetoid* venus = generatePlanet("resources/8k_venus_surface.png", "venus", 48, glm::vec3(1, 1, 1), false, false);
+    Planetoid* venus = generatePlanet("resources/2k_venus_surface.png", "venus", 48, glm::vec3(1, 1, 1), false, false);
 
     Planetoid* mars = generatePlanet("resources/2k_mars.png","mars", 48, glm::vec3(1, 1, 1), false, false);
 
@@ -234,23 +240,27 @@ void init()
 
     Planetoid* neptune = generatePlanet("resources/2k_neptune.png", "neptune", 48, glm::vec3(2, 2, 2), false, false);
 
+    Planetoid* pluto = generatePlanet("resources/4k_pluto.png", "pluto", 48, glm::vec3(0.3f, 0.3f, 0.3f), false, false);
 
-    baseNode->add_sat(mercury,40, 97);
-    baseNode->add_sat(venus, 60, 73);
-    baseNode->add_sat(mars, 80, 53);
-    baseNode->add_sat(earth, 100, 29);
+    glm::vec2 noOffset(0, 0);
 
-    earth->add_sat(moon, 7, 87 );
-    moon->add_sat(mSatellite, 2, 120);
-    //moon->add_sat(Moonmoon, 1, 120);
+    baseNode->add_sat(mercury,40, 97,noOffset);
+    baseNode->add_sat(venus, 60, 73,noOffset);
+    baseNode->add_sat(mars, 80, 53, noOffset);
+    baseNode->add_sat(earth, 100, 29, noOffset);
+
+    earth->add_sat(moon, 7, 87 , noOffset);
+    moon->add_sat(mSatellite, 2, 120, noOffset);
+    //moon->add_sat(Moonmoon, 1, 120,noOffset);
 	
-    baseNode->add_sat(jupiter, 140, 23);
-    jupiter->add_sat(jSattelite,5,120);
-    jupiter->add_sat(jmoon, 10, 200);
+    baseNode->add_sat(jupiter, 140, 23,glm::vec2(glm::radians(1.0f),0));
+    jupiter->add_sat(jSattelite,5,120,noOffset);
+    jupiter->add_sat(jmoon, 10, 200,noOffset);
 	
-    baseNode->add_sat(saturn, 160, 11);
-    baseNode->add_sat(uranus, 180, 7);
-    baseNode->add_sat(neptune, 200, 3);
+    baseNode->add_sat(saturn, 160, 11, glm::vec2(glm::radians(1.0f), 0));
+    baseNode->add_sat(uranus, 180, 7,noOffset);
+    baseNode->add_sat(neptune, 200, 3,noOffset);
+    baseNode->add_sat(pluto, 250, 1, glm::vec2(glm::radians(17.0f), 0));
 
 
 	
@@ -415,10 +425,12 @@ void draw()
 
     tigl::shader->enableTexture(false);
 
-    tigl::shader->setProjectionMatrix(projectionMatrix);
-    tigl::shader->setViewMatrix(viewMatrix);
-
     //glEnable(GL_NORMALIZE);
+    
+	
+    int viewport[4];
+    glGetIntegerv(GL_VIEWPORT, viewport);
+    projectionMatrix = glm::perspective(glm::radians(fov), viewport[2] / (float)viewport[3], 0.01f, 500.0f);
 	
     tigl::shader->setProjectionMatrix(projectionMatrix);
     tigl::shader->setViewMatrix(viewMatrix);
@@ -474,7 +486,8 @@ void draw()
         if (ImGui::Button(space_node->get_name().c_str()))
         {
             selectedNode = space_node;
-        }                            
+        }
+
     }
     
     ImGui::End();
@@ -484,6 +497,32 @@ void draw()
     ImGui::SliderFloat("time multiplier", &time_multiplier, 0, 3);
 
     ImGui::End();
+
+
+    if (selectedNode)
+    {
+        ImGui::End();
+
+        ImGui::Begin("planet control");
+        ImGui::Text(selectedNode->get_name().c_str());
+        ImGui::SliderFloat("orbit speed", selectedNode->p_get_orbit_speed(), 0, 360);
+        ImGui::SliderFloat("rotation speed", selectedNode->p_get_rotation_speed(), 0, 360);
+
+        Planetoid* planetoid = dynamic_cast<Planetoid*>(selectedNode);
+
+    	if (planetoid)
+        {
+            ImGui::Checkbox("has rings", planetoid->p_get_has_rings());
+
+            ImGui::Checkbox("is sun", planetoid->p_get_is_sun());
+        }
+
+    	
+        ImGui::End();
+    }
+
+	
+
 
 
 

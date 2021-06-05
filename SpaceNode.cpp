@@ -43,7 +43,9 @@ void SpaceNode::update(double timeMillis)
 	{
 		float x_offset = orbit_distance * sin(glm::radians(orbit_distance_traveled));
 		float y_offset = orbit_distance * cos(glm::radians(orbit_distance_traveled));
-		glm::vec3 offset(x_offset, 0 ,y_offset );
+		float z_offset = sin(glm::radians(orbit_distance_traveled))*rotationAngles[0]*orbit_distance;
+		
+		glm::vec3 offset(x_offset, z_offset ,y_offset );
 
 		this->position = orbit_object->position + offset;
 	}
@@ -55,12 +57,14 @@ void SpaceNode::update(double timeMillis)
 	
 }
 
-void SpaceNode::add_sat(SpaceNode* sat,float distance,float speed)
+void SpaceNode::add_sat(SpaceNode* sat,float distance,float speed, glm::vec2 orbit_offset)
 {
 	satellites.push_back(sat);
 	sat->set_orbit(this);
 	sat->set_distance(distance);
 	sat->set_orbit_speed(speed);
+	sat->rotationAngles[0] = orbit_offset[0];
+	sat->rotationAngles[2] = orbit_offset[1];
 }
 
 void SpaceNode::set_orbit(SpaceNode* node)
@@ -71,10 +75,13 @@ void SpaceNode::set_orbit(SpaceNode* node)
 glm::mat4 SpaceNode::getModelMatrix()
 {
 	glm::mat4 modelMatrix(1.0f);
+	
+	
 	modelMatrix = glm::translate(modelMatrix, this->position);
 	modelMatrix = glm::rotate(modelMatrix, this->rotationAngles[0], glm::vec3(1, 0, 0));
-	modelMatrix = glm::rotate(modelMatrix, this->rotationAngles[1], glm::vec3(0, 1, 0));
 	modelMatrix = glm::rotate(modelMatrix, this->rotationAngles[2], glm::vec3(0, 0, 1));
+	modelMatrix = glm::rotate(modelMatrix, this->rotationAngles[1], glm::vec3(0, 1, 0));
+	
 	modelMatrix = glm::scale(modelMatrix, this->scale);
 	return modelMatrix;
 }
@@ -108,3 +115,15 @@ float SpaceNode::get_orbit_distance()
 {
 	return orbit_distance;
 }
+
+float* SpaceNode::p_get_orbit_speed()
+{
+	return &orbit_speed;
+}
+float* SpaceNode::p_get_rotation_speed()
+{
+	return &rotation_speed;
+}
+
+
+

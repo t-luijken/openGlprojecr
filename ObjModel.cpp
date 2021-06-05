@@ -93,7 +93,7 @@ inline void higher(float value, float& bound)
 */
 ObjModel::ObjModel(const std::string& fileName) 
 {
-	std::cout << "Loading " << fileName << std::endl;
+//	std::cout << "Loading " << fileName << std::endl;
 	std::string dirName = fileName;
 	if (dirName.rfind("/") != std::string::npos)
 		dirName = dirName.substr(0, dirName.rfind("/"));
@@ -205,7 +205,7 @@ ObjModel::ObjModel(const std::string& fileName)
 	}
 	currentGroup->vbo = tigl::createVbo(groupVerticies);
 	groups.push_back(currentGroup);
-	std::cout << "groups %d" << groups.size() << std::endl;
+	//std::cout << "groups %d" << groups.size() << std::endl;
 
 	
 }
@@ -267,7 +267,7 @@ const glm::vec3 ObjModel::getTRF()
 
 void ObjModel::loadMaterialFile(const std::string& fileName, const std::string& dirName)
 {
-	std::cout << "Loading " << fileName << std::endl;
+	//std::cout << "Loading " << fileName << std::endl;
 	std::ifstream pFile(fileName.c_str());
 	if (!pFile.is_open())
 	{

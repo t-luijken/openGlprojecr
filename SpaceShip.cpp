@@ -314,10 +314,6 @@ namespace spaceShip
 				rotationSpeed += rotation_acceleration * timeMillis;
 			}
 
-			
-			
-
-
 			if (rotationAngles[2] < 90)
 			{
 				rotationAngles[2] += roll_speed * timeMillis;
@@ -347,17 +343,17 @@ namespace spaceShip
 		{
 
 
-			if (rotationSpeed > 0.05f)
+			if (rotationSpeed > 1.0f)
 			{
-				rotationSpeed -= (roll_speed / 2.0f) * timeMillis;
+				rotationSpeed -= (rotation_acceleration / 2.0f) * timeMillis;
 			}
 			else if (rotationSpeed > 0)
 			{
 				rotationSpeed = 0;
 			}
-			if (rotationSpeed < -0.05f)
+			if (rotationSpeed < -1.0f)
 			{
-				rotationSpeed += (roll_speed / 2.0f) * timeMillis;
+				rotationSpeed += (rotation_acceleration / 2.0f) * timeMillis;
 			}
 			else if (rotationSpeed < 0)
 			{
@@ -365,7 +361,7 @@ namespace spaceShip
 			}
 
 			
-			if (rotationAngles[2] > 0.05f)
+			if (rotationAngles[2] > 0.1f)
 			{
 				rotationAngles[2] -= (roll_speed /2.0f) *timeMillis;
 			}
@@ -373,7 +369,7 @@ namespace spaceShip
 			{
 				rotationAngles[2] = 0;
 			}
-			if (rotationAngles[2] < -0.05f)
+			if (rotationAngles[2] < -0.1f)
 			{
 				rotationAngles[2] += (roll_speed /2.0f) *timeMillis;
 			}
@@ -381,6 +377,7 @@ namespace spaceShip
 			{
 				rotationAngles[2] = 0;
 			}
+			
 		}
 
 		
