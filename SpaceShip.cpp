@@ -17,9 +17,10 @@ namespace spaceShip
 	float timeToNextParticle = 0;
 
 	float roll_angle;
-
 	float roll_speed = 200;
-	
+
+
+	float max_range = 300;
 
 	
 	Particle* CircularParticleArray[256];
@@ -224,6 +225,37 @@ namespace spaceShip
 			{
 				arrayPoint = 0;
 			}
+
+
+			if (position.x < -max_range)
+			{
+				position.x = -max_range;
+			}
+			if (position.x > max_range)
+			{
+				position.x = max_range;
+			}
+
+			if (position.y < -max_range)
+			{
+				position.y = -max_range;
+			}
+			if (position.y > max_range)
+			{
+				position.y = max_range;
+			}
+
+			if (position.z < -max_range)
+			{
+				position.z = -max_range;
+			}
+			if (position.z > max_range)
+			{
+				position.z = max_range;
+			}
+			
+			
+			
 		}
 
 
@@ -252,10 +284,18 @@ namespace spaceShip
 			if (flightSpeed > 0.05f)
 			{
 				flightSpeed -= (flight_acceleration / 2.0f) * timeMillis;
+			}else if (flightSpeed > 0)
+			{
+				flightSpeed = 0;
 			}
+			
 			if (flightSpeed < -0.05f)
 			{
 				flightSpeed += (flight_acceleration / 2.0f) * timeMillis;
+			}
+			else if (flightSpeed < 0)
+			{
+				flightSpeed = 0;
 			}
 		}
 
@@ -311,9 +351,17 @@ namespace spaceShip
 			{
 				rotationSpeed -= (roll_speed / 2.0f) * timeMillis;
 			}
+			else if (rotationSpeed > 0)
+			{
+				rotationSpeed = 0;
+			}
 			if (rotationSpeed < -0.05f)
 			{
 				rotationSpeed += (roll_speed / 2.0f) * timeMillis;
+			}
+			else if (rotationSpeed < 0)
+			{
+				rotationSpeed = 0;
 			}
 
 			
@@ -321,9 +369,17 @@ namespace spaceShip
 			{
 				rotationAngles[2] -= (roll_speed /2.0f) *timeMillis;
 			}
+			else if (rotationAngles[2] > 0)
+			{
+				rotationAngles[2] = 0;
+			}
 			if (rotationAngles[2] < -0.05f)
 			{
 				rotationAngles[2] += (roll_speed /2.0f) *timeMillis;
+			}
+			else if (rotationAngles[2] < 0)
+			{
+				rotationAngles[2] = 0;
 			}
 		}
 
@@ -353,9 +409,17 @@ namespace spaceShip
 			{
 				rotationAngles[0] -= (roll_speed / 2.0f) * timeMillis;
 			}
+			else if (rotationAngles[0] > 0)
+			{
+				rotationAngles[0] = 0;
+			}
 			if (rotationAngles[0] < -0.05f)
 			{
 				rotationAngles[0] += (roll_speed / 2.0f) * timeMillis;
+			}
+			else if (rotationAngles[0] < 0)
+			{
+				rotationAngles[0] = 0;
 			}
 		}
 

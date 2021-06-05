@@ -39,10 +39,6 @@ void SpaceNode::update(double timeMillis)
 	rotationAngles[1] = glm::radians(rotation);
 
 
-	for (SpaceNode* satellite : satellites)
-	{
-		satellite->update(timeMillis);
-	}
 	if (orbit_object)
 	{
 		float x_offset = orbit_distance * sin(glm::radians(orbit_distance_traveled));
@@ -50,6 +46,11 @@ void SpaceNode::update(double timeMillis)
 		glm::vec3 offset(x_offset, 0 ,y_offset );
 
 		this->position = orbit_object->position + offset;
+	}
+
+	for (SpaceNode* satellite : satellites)
+	{
+		satellite->update(timeMillis);
 	}
 	
 }
@@ -82,11 +83,11 @@ void SpaceNode::set_orbit_speed(float rotation_speed)
 {
 	this->orbit_speed = rotation_speed;
 }
+
 void SpaceNode::set_distance(float distance)
 {
 	this->orbit_distance = distance;
 }
-
 
 std::string SpaceNode::get_name()
 {
@@ -101,4 +102,9 @@ glm::vec3 SpaceNode::get_position()
 glm::vec3 SpaceNode::get_rotation()
 {
 	return rotationAngles;
+}
+
+float SpaceNode::get_orbit_distance()
+{
+	return orbit_distance;
 }

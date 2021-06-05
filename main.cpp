@@ -41,6 +41,7 @@ SpaceNode* selectedNode = nullptr;
 bool show_demo_window = true;
 bool show_another_window = false;
 ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+float time_multiplier = 1;
 
 glm::vec3 cameraPosition;
 
@@ -49,6 +50,7 @@ float cameraDistance = 10;
 void generateBackGroundImage();
 
 std::list<SpaceNode*> space_nodes;
+std::vector<Planetoid*> suns;
 
 
 int main(void)
@@ -87,7 +89,23 @@ int main(void)
 
 glm::uint textureID;
 
+Planetoid* generatePlanet(std::string texture, std::string name, float rotation_speed, glm::vec3 scale, bool is_sun, bool has_rings)
+{
+    Planetoid* planet = new Planetoid(name, &texture, rotation_speed, scale, is_sun, has_rings);
+    space_nodes.push_back(planet);
+    if (is_sun)
+    {
+        suns.push_back(planet);
+    }
+    return planet;
+}
+ManSatellite* generateSattelite(std::string name, std::string model_file_name, float rotation_speed, glm::vec3 scale)
+{
+    ManSatellite* satellite = new ManSatellite(name, model_file_name, rotation_speed, scale);
+    space_nodes.push_back(satellite);
 
+    return satellite;
+}
 
 
 void init()
@@ -187,48 +205,34 @@ void init()
 
     //baseNode = new ManSatellite("models/ship/shipA_OBJ.obj", nullptr, 0, 0,10);
 
-    std::string sunTexture = "resources/8k_sun.png";
-    baseNode = new Planetoid("sun",&sunTexture,0, glm::vec3(10,10,10), true);
 
-   // baseNode = new ManSatellite("models/monkey/monkey.obj", 10, glm::vec3(1, 1, 1));
+    baseNode = generatePlanet("resources/8k_sun.png", "sun", 0, glm::vec3(10, 10, 10), true, false);
+
+    Planetoid* mercury = generatePlanet("resources/8k_mercury.png", "mercury", 24, glm::vec3(1, 1, 1), false, false);
+
+    Planetoid* venus = generatePlanet("resources/8k_venus_surface.png", "venus", 48, glm::vec3(1, 1, 1), false, false);
+
+    Planetoid* mars = generatePlanet("resources/2k_mars.png","mars", 48, glm::vec3(1, 1, 1), false, false);
+
+    Planetoid* earth = generatePlanet("resources/2k_earth_daymap.png", "earth", 48, glm::vec3(1, 1, 1), false, false);
+
+    Planetoid* moon = generatePlanet("resources/2k_moon.png", "moon", 48, glm::vec3(0.3f, 0.3f, 0.3f), false, false);
+
+   // Planetoid* Moonmoon = generatePlanet("resources/2k_moon.png", "moonmoon", 120, glm::vec3(0.2f, 0.2f, 0.2f), false, false);
 	
-    std::string mercureyTexture = "resources/8k_mercury.png";
-    Planetoid* mercury = new Planetoid("mercury", &mercureyTexture,24, glm::vec3(1, 1, 1), false);
-
-    std::string venusTexture = "resources/8k_venus_surface.png";
-    Planetoid* venus = new Planetoid("venus",&venusTexture, 48, glm::vec3(1, 1, 1), false);
-
-    std::string marsTexture = "resources/2k_mars.png";
-    Planetoid* mars = new Planetoid("mars",&marsTexture, 48, glm::vec3(1, 1, 1), false);
-
-    std::string earthTexture = "resources/2k_earth_daymap.png";
-    Planetoid* earth = new Planetoid("earth",&earthTexture, 48, glm::vec3(1, 1, 1), false);
-
-    std::string moonTexture = "resources/2k_moon.png";
-    Planetoid* moon = new Planetoid("moon",&moonTexture,  48, glm::vec3(0.3f, 0.3f, 0.3f), false);
-	 
-    ManSatellite* mSatellite = new ManSatellite("mSatellite","models/sat/sat.obj", 120, glm::vec3(0.5f, 0.5f, 0.5f));
+    ManSatellite* mSatellite = generateSattelite("mSatellite", "models/sat/sat.obj", 120, glm::vec3(0.5f, 0.5f, 0.5f));
 	
-	
-    std::string jupiterTexture = "resources/2k_jupiter.png";
-    Planetoid* jupiter = new Planetoid("jupiter",&jupiterTexture, 48, glm::vec3(3, 3, 3), false);
+    Planetoid* jupiter = generatePlanet("resources/2k_jupiter.png", "jupiter", 48, glm::vec3(3, 3, 3), false, false);
 
-    std::string jmoonTexture = "resources/2k_moon.png";
-    Planetoid* jmoon = new Planetoid("jmoon", &jmoonTexture, 48, glm::vec3(0.3f, 0.3f, 0.3f), false);
+    Planetoid* jmoon = generatePlanet("resources/2k_moon.png", "jmoon", 48, glm::vec3(0.3f, 0.3f, 0.3f), false, false);
 
-	
+    ManSatellite* jSattelite = generateSattelite("jSattelite","models/sat/sat.obj", 120, glm::vec3(1, 1, 1));
 
-    ManSatellite* jSattelite = new ManSatellite("jSattelite","models/sat/sat.obj", 120, glm::vec3(1, 1, 1));
+    Planetoid* saturn = generatePlanet("resources/2k_saturn.png", "saturn", 48, glm::vec3(2, 2, 2), false, true);
 
-    std::string saturnTexture = "resources/2k_saturn.png";
-    Planetoid* saturn = new Planetoid("saturn",&saturnTexture, 48, glm::vec3(2, 2, 2), false);
+    Planetoid* uranus = generatePlanet("resources/2k_uranus.png", "uranus", 48, glm::vec3(2, 2, 2), false, false);
 
-    std::string uranusTexture = "resources/2k_uranus.png";
-    Planetoid* uranus = new Planetoid("uranus",&uranusTexture, 48, glm::vec3(2, 2, 2), false);
-	
-	
-    std::string neptuneTexture = "resources/2k_neptune.png";
-    Planetoid* neptune = new Planetoid("neptune",&neptuneTexture, 48, glm::vec3(2, 2, 2), false);
+    Planetoid* neptune = generatePlanet("resources/2k_neptune.png", "neptune", 48, glm::vec3(2, 2, 2), false, false);
 
 
     baseNode->add_sat(mercury,40, 97);
@@ -236,8 +240,9 @@ void init()
     baseNode->add_sat(mars, 80, 53);
     baseNode->add_sat(earth, 100, 29);
 
-    earth->add_sat(moon, 7, 89 );
-    moon->add_sat(mSatellite, 1, 120);
+    earth->add_sat(moon, 7, 87 );
+    moon->add_sat(mSatellite, 2, 120);
+    //moon->add_sat(Moonmoon, 1, 120);
 	
     baseNode->add_sat(jupiter, 140, 23);
     jupiter->add_sat(jSattelite,5,120);
@@ -247,21 +252,6 @@ void init()
     baseNode->add_sat(uranus, 180, 7);
     baseNode->add_sat(neptune, 200, 3);
 
-    space_nodes.push_back(baseNode);
-    space_nodes.push_back(mercury);
-    space_nodes.push_back(venus);
-    space_nodes.push_back(mars);
-    space_nodes.push_back(earth);
-    space_nodes.push_back(moon);
-    space_nodes.push_back(mSatellite);
-    space_nodes.push_back(jupiter);
-    space_nodes.push_back(jSattelite);
-    space_nodes.push_back(jmoon);
-    space_nodes.push_back(saturn);
-    space_nodes.push_back(uranus);
-    space_nodes.push_back(neptune);
-    
-	
 
 	
     int viewport[4];
@@ -311,11 +301,8 @@ void init()
 void update(float timeMillis)
 {
     glfwPollEvents();
-    baseNode->update(timeMillis);
+    baseNode->update(timeMillis*time_multiplier);
     spaceShip::update_ship(timeMillis);
-
-   
-
 
     if (!selectedNode)
     {
@@ -385,6 +372,11 @@ void draw()
 	
     glClear(GL_DEPTH_BUFFER_BIT);
     glDisable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    tigl::shader->enableAlphaTest(true);
+
+
 
     tigl::shader->enableTexture(true);
 	
@@ -426,24 +418,26 @@ void draw()
     tigl::shader->setProjectionMatrix(projectionMatrix);
     tigl::shader->setViewMatrix(viewMatrix);
 
-
-    
-	
-
     //glEnable(GL_NORMALIZE);
 	
     tigl::shader->setProjectionMatrix(projectionMatrix);
     tigl::shader->setViewMatrix(viewMatrix);
 
     tigl::shader->enableLighting(true);
-    tigl::shader->setLightCount(1);
+    tigl::shader->setLightCount(suns.size());
 
-    tigl::shader->setLightDirectional(0, false);
-    tigl::shader->setLightPosition(0, glm::vec3(0, 0, 0));
-    tigl::shader->setLightAmbient(0, glm::vec3(0.1f, 0.1f, 0.15f));
-    tigl::shader->setLightDiffuse(0, glm::vec3(0.8f, 0.8f, 0.8f));
-    tigl::shader->setLightSpecular(0, glm::vec3(0, 0, 0));
-    tigl::shader->setShinyness(32.0f);
+    for (int i = 0; i < suns.size(); ++i)
+    {
+        tigl::shader->setLightDirectional(i, false);
+        tigl::shader->setLightPosition(i, suns[i]->get_position());
+        tigl::shader->setLightAmbient(i, glm::vec3(0.1f, 0.1f, 0.15f));
+        tigl::shader->setLightDiffuse(i, glm::vec3(0.8f, 0.8f, 0.8f));
+        tigl::shader->setLightSpecular(i, glm::vec3(0, 0, 0));
+        tigl::shader->setShinyness(32.0f);
+    }
+
+	
+  
 	
     glShadeModel(GL_SMOOTH);
 
@@ -473,17 +467,27 @@ void draw()
     if (ImGui::Button("spaceShip"))
     {
         selectedNode = nullptr;
-    }                            // Buttons ret
+    }                           
 
     for (SpaceNode* space_node : space_nodes)
     {
         if (ImGui::Button(space_node->get_name().c_str()))
         {
             selectedNode = space_node;
-        }                            // Buttons return true when clicked (most widgets return true when edited/activated)
+        }                            
     }
     
     ImGui::End();
+  
+    ImGui::Begin("time settings");
+	
+    ImGui::SliderFloat("time multiplier", &time_multiplier, 0, 3);
+
+    ImGui::End();
+
+
+
+	
 
     ImGui::Render();
     

@@ -34,6 +34,7 @@ public:
 	void set_orbit(SpaceNode* node);
 	void set_orbit_speed(float rotation_speed);
 	void set_distance(float distance);
+	float get_orbit_distance();
 	std::string get_name();
 	glm::vec3 get_position();
 	glm::vec3 get_rotation();

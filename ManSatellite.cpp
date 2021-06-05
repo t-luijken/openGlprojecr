@@ -16,8 +16,15 @@ void ManSatellite::draw()
 	tigl::shader->setModelMatrix(originalModelMatrix);
 
 
+
+	
+
 	for (SpaceNode* satellite : satellites)
 	{
+
+		
+
+		
 		satellite->draw();
 	}
 	
