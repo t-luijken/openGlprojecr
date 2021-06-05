@@ -3,16 +3,13 @@
 
 namespace spaceShip
 {
-
-
-
 	void init_ship();
 	void draw_ship();
 	void update_ship(double timeMillis);
 
 	glm::vec3 getShipPosition();
 	glm::vec3 getShipRotation();
-	
+
 	void ship_forwards();
 	void ship_forwards_release();
 	void ship_backwards();
@@ -28,4 +25,3 @@ namespace spaceShip
 	void on_press_control();
 	void on_release_control();
 }
-

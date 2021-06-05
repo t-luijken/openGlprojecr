@@ -3,32 +3,28 @@
 #include <iostream>
 #include <glm/ext/matrix_transform.hpp>
 
-
-SpaceNode::SpaceNode(std::string name,  float rotation_speed, glm::vec3 scale)
+SpaceNode::SpaceNode(std::string name, float rotation_speed, glm::vec3 scale)
 {
 	this->name = name;
 
 	this->rotation_speed = rotation_speed;
 	this->scale = scale;
-	
 
 	this->rotationAngles = glm::vec3(0, 0, 0);
 
 	if (!orbit_object)
 	{
 		position = glm::vec3(0, 0, 0);
-	}else
+	}
+	else
 	{
 		float x_offset = orbit_distance * sin(glm::radians(orbit_distance_traveled));
 		float y_offset = orbit_distance * cos(glm::radians(orbit_distance_traveled));
 		glm::vec3 offset(x_offset, y_offset, 0);
-	    
 
 		this->position = orbit_object->position + offset;
 	}
-	
 }
-
 
 void SpaceNode::update(double timeMillis)
 {
@@ -38,14 +34,13 @@ void SpaceNode::update(double timeMillis)
 	rotation = fmod(rotation, 360);
 	rotationAngles[1] = glm::radians(rotation);
 
-
 	if (orbit_object)
 	{
 		float x_offset = orbit_distance * sin(glm::radians(orbit_distance_traveled));
 		float y_offset = orbit_distance * cos(glm::radians(orbit_distance_traveled));
-		float z_offset = sin(glm::radians(orbit_distance_traveled))*rotationAngles[0]*orbit_distance;
-		
-		glm::vec3 offset(x_offset, z_offset ,y_offset );
+		float z_offset = sin(glm::radians(orbit_distance_traveled)) * rotationAngles[0] * orbit_distance;
+
+		glm::vec3 offset(x_offset, z_offset, y_offset);
 
 		this->position = orbit_object->position + offset;
 	}
@@ -54,10 +49,9 @@ void SpaceNode::update(double timeMillis)
 	{
 		satellite->update(timeMillis);
 	}
-	
 }
 
-void SpaceNode::add_sat(SpaceNode* sat,float distance,float speed, glm::vec2 orbit_offset)
+void SpaceNode::add_sat(SpaceNode* sat, float distance, float speed, glm::vec2 orbit_offset)
 {
 	satellites.push_back(sat);
 	sat->set_orbit(this);
@@ -75,13 +69,12 @@ void SpaceNode::set_orbit(SpaceNode* node)
 glm::mat4 SpaceNode::getModelMatrix()
 {
 	glm::mat4 modelMatrix(1.0f);
-	
-	
+
 	modelMatrix = glm::translate(modelMatrix, this->position);
 	modelMatrix = glm::rotate(modelMatrix, this->rotationAngles[0], glm::vec3(1, 0, 0));
 	modelMatrix = glm::rotate(modelMatrix, this->rotationAngles[2], glm::vec3(0, 0, 1));
 	modelMatrix = glm::rotate(modelMatrix, this->rotationAngles[1], glm::vec3(0, 1, 0));
-	
+
 	modelMatrix = glm::scale(modelMatrix, this->scale);
 	return modelMatrix;
 }
@@ -124,6 +117,3 @@ float* SpaceNode::p_get_rotation_speed()
 {
 	return &rotation_speed;
 }
-
-
-

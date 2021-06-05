@@ -115,7 +115,6 @@ namespace tigl
 			return { position, glm::vec3(0,1,0), color, texcoord };
 		}
 
-
 		// Creates a vertex with a position, color and normal
 		static Vertex PCN(const glm::vec3& position, const glm::vec4& color, const glm::vec3& normal) {
 			return { position, normal, color, glm::vec2(0,0) };
@@ -169,6 +168,3 @@ namespace tigl
 	// draws vertices from a VBO
 	void drawVertices(GLenum shape, VBO* vbo);
 }
-
-
-

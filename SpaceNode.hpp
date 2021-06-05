@@ -6,7 +6,6 @@
 
 class SpaceNode
 {
-
 protected:
 
 	std::string name;
@@ -19,15 +18,13 @@ protected:
 	float orbit_speed;
 	float rotation_speed;
 
-
 	float rotation = 0;
 	float orbit_distance_traveled = 0;
-	
 
 	glm::mat4 getModelMatrix();
 
 public:
-	SpaceNode(std::string name,float rotation_speed, glm::vec3 scale);
+	SpaceNode(std::string name, float rotation_speed, glm::vec3 scale);
 	virtual void draw() = 0;
 	void update(double timeMillis);
 	void add_sat(SpaceNode* sat, float distance, float speed, glm::vec2 orbit_offset);
@@ -40,8 +37,4 @@ public:
 	glm::vec3 get_rotation();
 	float* p_get_orbit_speed();
 	float* p_get_rotation_speed();
-
-	
-	
-	
 };

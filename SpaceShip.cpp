@@ -7,7 +7,6 @@
 
 namespace spaceShip
 {
-
 	ObjModel* model;
 	glm::vec3 position;
 	glm::vec3 rotationAngles;
@@ -19,13 +18,11 @@ namespace spaceShip
 	float roll_angle;
 	float roll_speed = 200;
 
-
 	float max_range = 300;
 
-	
 	Particle* CircularParticleArray[256];
 	int arrayPoint = 0;
-	
+
 	bool buttonsPressed[6];
 
 	float rotation_acceleration = 200;
@@ -34,7 +31,6 @@ namespace spaceShip
 	float flight_acceleration = 50;
 	float flightSpeed = 0;
 
-	
 	float enginedistance = 2.0f;
 
 	glm::mat4 getModelMatrix()
@@ -45,11 +41,9 @@ namespace spaceShip
 		modelMatrix = glm::rotate(modelMatrix, glm::radians(rotationAngles[1]), glm::vec3(0, 1, 0));
 
 		modelMatrix = glm::rotate(modelMatrix, glm::radians(rotationAngles[0]), glm::vec3(1, 0, 0));
-		
+
 		modelMatrix = glm::rotate(modelMatrix, glm::radians(rotationAngles[2]), glm::vec3(0, 0, 1));
 
-	
-		
 		modelMatrix = glm::scale(modelMatrix, scale);
 		return modelMatrix;
 	}
@@ -57,13 +51,12 @@ namespace spaceShip
 	{
 		glm::mat4 modelMatrix(1.0f);
 		modelMatrix = glm::translate(modelMatrix, particle->position);
-		modelMatrix = glm::rotate(modelMatrix,0.0f, glm::vec3(1, 0, 0));
+		modelMatrix = glm::rotate(modelMatrix, 0.0f, glm::vec3(1, 0, 0));
 		modelMatrix = glm::rotate(modelMatrix, glm::radians(rotationAngles[1]), glm::vec3(0, 1, 0));
 		modelMatrix = glm::rotate(modelMatrix, 0.0f, glm::vec3(0, 0, 1));
-		modelMatrix = glm::scale(modelMatrix, glm::vec3(0.1f*particle->lifetime,0.1f * particle->lifetime,0.1f * particle->lifetime));
+		modelMatrix = glm::scale(modelMatrix, glm::vec3(0.1f * particle->lifetime, 0.1f * particle->lifetime, 0.1f * particle->lifetime));
 		return modelMatrix;
 	}
-
 
 	void init_ship()
 	{
@@ -73,14 +66,12 @@ namespace spaceShip
 		scale = glm::vec3(0.1f, 0.1f, 0.1f);
 	}
 
-
 	void drawParticle(Particle* particle)
 	{
 		glm::mat4 originalModelMatrix = tigl::shader->getModelMatrix();
 		tigl::shader->setModelMatrix(originalModelMatrix * getParticleModelMatrix(particle));
 
 		assert(particle);
-		
 
 		tigl::begin(GL_TRIANGLES);
 		tigl::addVertex(tigl::Vertex::PC(glm::vec3(0, 1, 0), glm::vec4(0, 0, 1, 1)));
@@ -88,7 +79,6 @@ namespace spaceShip
 		tigl::addVertex(tigl::Vertex::PC(glm::vec3(1, -1, 0), glm::vec4(0, 0, 1, 1)));
 		tigl::end();
 
-		
 		tigl::shader->setModelMatrix(originalModelMatrix);
 	}
 
@@ -96,10 +86,8 @@ namespace spaceShip
 	{
 		particle->lifetime -= timeMillis;
 		particle->position += particle->direction;
-		
 	}
-	
-	
+
 	void draw_ship()
 	{
 		glm::mat4 originalModelMatrix = tigl::shader->getModelMatrix();
@@ -107,19 +95,18 @@ namespace spaceShip
 		model->draw();
 		tigl::shader->setModelMatrix(originalModelMatrix);
 
-
 		float x = sin(glm::radians(rotationAngles[1])) * (flightSpeed);
 		float z = cos(glm::radians(rotationAngles[1])) * (flightSpeed);
 		glm::vec3 offset(x, 0, z);
 		offset += position;
-		
+
 		/*glBegin(GL_LINES);
 		glVertex3f(position[0],position[1] ,position[2]);
 		glVertex3f(offset[0],offset[1],offset[2]);
 		glEnd();*/
 
 		tigl::shader->enableLighting(false);
-		
+
 		for (Particle* particle : CircularParticleArray)
 		{
 			if (particle)
@@ -127,13 +114,12 @@ namespace spaceShip
 				if (particle->lifetime > 0)
 				{
 					drawParticle(particle);
-				}	
+				}
 			}
 		}
 
 		tigl::shader->enableLighting(true);
 	}
-
 
 	glm::vec3 getShipPosition()
 	{
@@ -150,7 +136,6 @@ namespace spaceShip
 		buttonsPressed[0] = true;
 		particle_time = 0.001f;
 	}
-
 
 	void ship_forwards_release()
 	{
@@ -187,22 +172,20 @@ namespace spaceShip
 		buttonsPressed[3] = false;
 	}
 
-
 	void update_ship(double timeMillis)
 	{
 		particle_time -= timeMillis;
 		if (particle_time <= 0)
 		{
-			float x = sin(glm::radians(rotationAngles[1]))/10.0f;
-			float z = cos(glm::radians(rotationAngles[1]))/10.0f;
+			float x = sin(glm::radians(rotationAngles[1])) / 10.0f;
+			float z = cos(glm::radians(rotationAngles[1])) / 10.0f;
 			glm::vec3 direction(x, 0.0005f, z);
 
-			float randX = (((float)(rand() % 10)) - 5.0f)/10.0f;
-			float randY = (((float)(rand() % 10)) - 5.0f)/10.0f;
-			float randZ = (((float)(rand() % 10)) - 5.0f)/10.0f;
+			float randX = (((float)(rand() % 10)) - 5.0f) / 10.0f;
+			float randY = (((float)(rand() % 10)) - 5.0f) / 10.0f;
+			float randZ = (((float)(rand() % 10)) - 5.0f) / 10.0f;
 
-			glm::vec3 offset(randX,randY,randZ);
-
+			glm::vec3 offset(randX, randY, randZ);
 
 			float engineX = sin(glm::radians(rotationAngles[1])) * (enginedistance);
 			float engineZ = cos(glm::radians(rotationAngles[1])) * (enginedistance);
@@ -215,17 +198,16 @@ namespace spaceShip
 			pPosition += engineOffset;
 
 			delete CircularParticleArray[arrayPoint];
-			
-			Particle* particle = new struct Particle(direction,pPosition);
+
+			Particle* particle = new struct Particle(direction, pPosition);
 
 			CircularParticleArray[arrayPoint] = particle;
-			
+
 			arrayPoint++;
 			if (arrayPoint == 256)
 			{
 				arrayPoint = 0;
 			}
-
 
 			if (position.x < -max_range)
 			{
@@ -253,13 +235,8 @@ namespace spaceShip
 			{
 				position.z = max_range;
 			}
-			
-			
-			
 		}
 
-
-		
 		if (buttonsPressed[0])
 		{
 			if (flightSpeed < 50)
@@ -274,21 +251,18 @@ namespace spaceShip
 				flightSpeed -= flight_acceleration * timeMillis;
 			}
 		}
-		
-
-
 
 		if (!(buttonsPressed[0]) && !(buttonsPressed[1]))
 		{
-
 			if (flightSpeed > 0.05f)
 			{
 				flightSpeed -= (flight_acceleration / 2.0f) * timeMillis;
-			}else if (flightSpeed > 0)
+			}
+			else if (flightSpeed > 0)
 			{
 				flightSpeed = 0;
 			}
-			
+
 			if (flightSpeed < -0.05f)
 			{
 				flightSpeed += (flight_acceleration / 2.0f) * timeMillis;
@@ -306,7 +280,6 @@ namespace spaceShip
 
 		position -= offset;
 
-		
 		if (buttonsPressed[2])
 		{
 			if (rotationSpeed < 200)
@@ -318,31 +291,24 @@ namespace spaceShip
 			{
 				rotationAngles[2] += roll_speed * timeMillis;
 			}
-			
-			
 		}
 		if (buttonsPressed[3])
 		{
-
 			if (rotationSpeed > -200)
 			{
 				rotationSpeed -= rotation_acceleration * timeMillis;
 			}
-			
 
 			if (rotationAngles[2] > -90)
 			{
 				rotationAngles[2] -= roll_speed * timeMillis;
 			}
-			
 		}
 
 		rotationAngles[1] += rotationSpeed * timeMillis;
 
-		if (!(buttonsPressed[2])&&!(buttonsPressed[3]))
+		if (!(buttonsPressed[2]) && !(buttonsPressed[3]))
 		{
-
-
 			if (rotationSpeed > 1.0f)
 			{
 				rotationSpeed -= (rotation_acceleration / 2.0f) * timeMillis;
@@ -360,10 +326,9 @@ namespace spaceShip
 				rotationSpeed = 0;
 			}
 
-			
 			if (rotationAngles[2] > 0.1f)
 			{
-				rotationAngles[2] -= (roll_speed /2.0f) *timeMillis;
+				rotationAngles[2] -= (roll_speed / 2.0f) * timeMillis;
 			}
 			else if (rotationAngles[2] > 0)
 			{
@@ -371,23 +336,20 @@ namespace spaceShip
 			}
 			if (rotationAngles[2] < -0.1f)
 			{
-				rotationAngles[2] += (roll_speed /2.0f) *timeMillis;
+				rotationAngles[2] += (roll_speed / 2.0f) * timeMillis;
 			}
 			else if (rotationAngles[2] < 0)
 			{
 				rotationAngles[2] = 0;
 			}
-			
 		}
 
-		
 		if (buttonsPressed[4])
 		{
 			if (rotationAngles[0] < 45)
 			{
 				rotationAngles[0] += roll_speed * timeMillis;
 			}
-			
 		}
 
 		if (buttonsPressed[5])
@@ -396,12 +358,10 @@ namespace spaceShip
 			{
 				rotationAngles[0] -= roll_speed * timeMillis;
 			}
-			
 		}
 
 		if (!(buttonsPressed[4]) && !(buttonsPressed[5]))
 		{
-
 			if (rotationAngles[0] > 0.05f)
 			{
 				rotationAngles[0] -= (roll_speed / 2.0f) * timeMillis;
@@ -420,9 +380,7 @@ namespace spaceShip
 			}
 		}
 
-		
-
-		for (Particle *particle : CircularParticleArray)
+		for (Particle* particle : CircularParticleArray)
 		{
 			if (particle)
 			{
@@ -437,10 +395,8 @@ namespace spaceShip
 		{
 			rotationAngles[1] -= 360.0f;
 		}
-		
 	}
 }
-
 
 void spaceShip::on_press_shift()
 {
@@ -450,7 +406,6 @@ void spaceShip::on_press_shift()
 void spaceShip::on_release_shift()
 {
 	buttonsPressed[4] = false;
-	
 }
 
 void spaceShip::on_press_control()

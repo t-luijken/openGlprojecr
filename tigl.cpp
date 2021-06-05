@@ -36,8 +36,8 @@ namespace tigl
 
 		void enableFog(bool enabled) { setUniform(Uniform::useFog, enabled); }
 		void setFogLinear(float begin, float end) {
-			setUniform(Uniform::fogType, 0); 
-				setUniform(Uniform::fogLinNear, begin);
+			setUniform(Uniform::fogType, 0);
+			setUniform(Uniform::fogLinNear, begin);
 			setUniform(Uniform::fogLinFar, end);
 		}
 		void setFogExp(float density) {
@@ -78,7 +78,6 @@ namespace tigl
 			fogExpDensity,
 			fogColor,
 
-
 			UniformMax
 		};
 
@@ -106,7 +105,6 @@ namespace tigl
 		glm::mat4 modelMatrix;
 		glm::mat4 projectionMatrix;
 		glm::mat4 viewMatrix;
-
 	};
 
 	std::unique_ptr<internal::Shader> shader;
@@ -114,7 +112,6 @@ namespace tigl
 	int attributeColor = 1;
 	int attributeTexcoord = 2;
 	int attributeNormal = 3;
-
 
 	// Initializes shader used
 	void init()
@@ -175,7 +172,6 @@ namespace tigl
 		glDeleteBuffers(1, &id);
 	}
 
-
 	void drawVertices(GLenum shape, VBO* vbo)
 	{
 		static Vertex tmpVertex;
@@ -191,11 +187,6 @@ namespace tigl
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 		}
 	}
-
-
-
-
-
 
 	ShaderImpl::ShaderImpl()
 	{
@@ -247,7 +238,6 @@ uniform float fogLinNear = 0;
 uniform float fogLinFar = 100;
 uniform float fogExpDensity = 0;
 
-
 uniform float shinyness = 0;
 struct Light
 {
@@ -260,12 +250,10 @@ struct Light
 uniform Light lights[5];
 uniform int lightCount = 1;
 
-
 in vec4 color;
 in vec2 texCoord;
 in vec3 normal;
 in vec3 position;
-
 
 float fogFactorLinear(const float dist, const float start, const float end) {
   return 1.0 - clamp((end - dist) / (end - start), 0.0, 1.0);
@@ -297,7 +285,6 @@ void main()
 		vec3 diffuse = vec3(0,0,0);
 
 		for(int i = 0; i < lightCount; i++) {
-		
 			vec3 lightDir = normalize(lights[i].position - position);
 			if(lights[i].directional)
 				lightDir = normalize(lights[i].position);
@@ -306,12 +293,12 @@ void main()
 
 			float diffuseFactor = max(0, dot(lightDir, normalize(normal)));
 			diffuse += diffuseFactor * lights[i].diffuse;
-		
+
 			vec3 reflectDir = reflect(-lightDir, normalize(normal));
 			float specularFactor = pow(max(dot(normalize(cameraPosition-position), reflectDir), 0.0), shinyness);
 			specular += specularFactor * lights[i].specular;
 		}
-		
+
 		outputColor.rgb = (ambient + specular + diffuse) * outputColor.rgb;
 	}
 	if(useFog) {
@@ -322,9 +309,7 @@ void main()
 			outputColor.rgb = mix(outputColor.rgb, fogColor, fogFactorExp(fogDistance, fogExpDensity));
 		else if(fogType == 2)
 			outputColor.rgb = mix(outputColor.rgb, fogColor, fogFactorExp2(fogDistance, fogExpDensity));
-
 	}
-
 
 	if(useAlphaTest && outputColor.a < 0.01)
 		discard;
@@ -373,7 +358,6 @@ void main()
 
 	ShaderImpl::~ShaderImpl()
 	{
-
 	}
 	void ShaderImpl::use()
 	{
@@ -402,7 +386,6 @@ void main()
 		glAttachShader(programId, shaderId);
 	}
 
-
 	void ShaderImpl::setProjectionMatrix(const glm::mat4& matrix)
 	{
 		this->projectionMatrix = matrix;
@@ -416,7 +399,6 @@ void main()
 
 		glm::vec4 cameraPosition = glm::inverse(matrix) * glm::vec4(0, 0, 0, 1);
 		setUniform(Uniform::cameraPosition, glm::vec3(cameraPosition));
-
 	}
 
 	void ShaderImpl::setModelMatrix(const glm::mat4& matrix)
@@ -430,11 +412,6 @@ void main()
 	{
 		return this->modelMatrix;
 	}
-
-
-
-
-
 
 	void ShaderImpl::setUniform(Uniform uniform, const glm::mat4& value)
 	{
@@ -472,8 +449,6 @@ void main()
 		glUniform1f(uniforms[uniform], value);
 	}
 
-
-
 	void ShaderImpl::setUniform(const std::string& uniform, const glm::mat4& value)
 	{
 		glUniformMatrix4fv(glGetUniformLocation(programId, uniform.c_str()), 1, false, glm::value_ptr(value));
@@ -497,7 +472,6 @@ void main()
 		glUniform2fv(glGetUniformLocation(programId, uniform.c_str()), 1, glm::value_ptr(value));
 	}
 
-
 	void ShaderImpl::setUniform(const std::string& uniform, bool value)
 	{
 		glUniform1i(glGetUniformLocation(programId, uniform.c_str()), value ? GL_TRUE : GL_FALSE);
@@ -515,9 +489,4 @@ void main()
 	{
 		return position == other.position && normal == other.normal && color == other.color && texcoord == other.texcoord;
 	}
-
-
-
-
-
 }

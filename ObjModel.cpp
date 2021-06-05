@@ -87,13 +87,12 @@ inline void higher(float value, float& bound)
 		bound = value;
 }
 
-
 /**
 * Loads an object model
 */
-ObjModel::ObjModel(const std::string& fileName) 
+ObjModel::ObjModel(const std::string& fileName)
 {
-//	std::cout << "Loading " << fileName << std::endl;
+	//	std::cout << "Loading " << fileName << std::endl;
 	std::string dirName = fileName;
 	if (dirName.rfind("/") != std::string::npos)
 		dirName = dirName.substr(0, dirName.rfind("/"));
@@ -206,8 +205,6 @@ ObjModel::ObjModel(const std::string& fileName)
 	currentGroup->vbo = tigl::createVbo(groupVerticies);
 	groups.push_back(currentGroup);
 	//std::cout << "groups %d" << groups.size() << std::endl;
-
-	
 }
 
 ObjModel::~ObjModel(void)
@@ -236,7 +233,7 @@ void ObjModel::draw()
 		int materialIndex = group->materialIndex;
 		if (materialIndex == -1) {
 			glBindTexture(GL_TEXTURE_2D, 0);
-			std::cout << "no textures" <<std::endl;
+			std::cout << "no textures" << std::endl;
 		}
 		else
 		{
@@ -257,13 +254,10 @@ const glm::vec3 ObjModel::getBLH()
 	return blh;
 }
 
-
-
 const glm::vec3 ObjModel::getTRF()
 {
 	return trf;
 }
-
 
 void ObjModel::loadMaterialFile(const std::string& fileName, const std::string& dirName)
 {
