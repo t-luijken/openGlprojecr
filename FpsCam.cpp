@@ -9,7 +9,6 @@ FpsCam::FpsCam(GLFWwindow* window)
 		glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 }
 
-
 glm::mat4 FpsCam::getMatrix()
 {
 	glm::mat4 ret(1.0f);
@@ -25,7 +24,6 @@ void FpsCam::move(float angle, float fac)
 	position.z += (float)sin(rotation.y + glm::radians(angle)) * fac;
 }
 
-
 void FpsCam::update(GLFWwindow* window)
 {
 	double x, y;
@@ -39,7 +37,6 @@ void FpsCam::update(GLFWwindow* window)
 
 	lastX = x;
 	lastY = y;
-
 
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 		move(0, 0.5f);

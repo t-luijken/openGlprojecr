@@ -17,5 +17,3 @@ private:
 
 	void move(float angle, float fac);
 };
-
-

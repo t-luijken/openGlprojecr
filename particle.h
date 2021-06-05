@@ -13,4 +13,3 @@ struct Particle
 		lifetime = 1.0f;
 	}
 };
-
