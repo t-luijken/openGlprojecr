@@ -106,7 +106,6 @@ void generateSphereVBO()
 			vertices.push_back(tigl::Vertex::PTN(glm::vec3(x_next_both, z_next_both, y_next_both), glm::vec2(jColorB, 1 - iColorB), normal));
 		}
 	}
-
 	std::vector<tigl::Vertex*> calculated;
 
 	for (int i = 0; i < vertices.size(); ++i)

@@ -5,6 +5,8 @@
 
 #include "Particle.h"
 
+#define MAX_SPEED 50
+
 namespace spaceShip
 {
 	ObjModel* model;
@@ -60,7 +62,7 @@ namespace spaceShip
 
 	void init_ship()
 	{
-		model = new ObjModel("models/ship/shipA_OBJ.obj");
+		model = new ObjModel("models/ship 2/ship_2.obj");
 		position = glm::vec3(20, 0, 0);
 		rotationAngles = glm::vec3(0, 0, 0);
 		scale = glm::vec3(0.1f, 0.1f, 0.1f);
@@ -177,8 +179,8 @@ namespace spaceShip
 		particle_time -= timeMillis;
 		if (particle_time <= 0)
 		{
-			float x = sin(glm::radians(rotationAngles[1])) / 10.0f;
-			float z = cos(glm::radians(rotationAngles[1])) / 10.0f;
+			float x = (sin(glm::radians(rotationAngles[1])) / 10.0f) * ((flightSpeed/MAX_SPEED)+0.5);
+			float z = (cos(glm::radians(rotationAngles[1])) / 10.0f) * ((flightSpeed/MAX_SPEED)+0.5);
 			glm::vec3 direction(x, 0.0005f, z);
 
 			float randX = (((float)(rand() % 10)) - 5.0f) / 10.0f;
@@ -239,14 +241,14 @@ namespace spaceShip
 
 		if (buttonsPressed[0])
 		{
-			if (flightSpeed < 50)
+			if (flightSpeed < MAX_SPEED)
 			{
 				flightSpeed += flight_acceleration * timeMillis;
 			}
 		}
 		if (buttonsPressed[1])
 		{
-			if (flightSpeed > -50)
+			if (flightSpeed > -MAX_SPEED)
 			{
 				flightSpeed -= flight_acceleration * timeMillis;
 			}

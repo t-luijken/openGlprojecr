@@ -40,6 +40,7 @@ SpaceNode* selectedNode = nullptr;
 
 ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 float time_multiplier = 1;
+bool use_debug_background = false;
 
 glm::vec3 cameraPosition;
 
@@ -215,7 +216,16 @@ void init()
 
 	Planetoid* moon = generatePlanet("resources/2k_moon.png", "moon", 48, glm::vec3(0.3f, 0.3f, 0.3f), false, false);
 
-	// Planetoid* Moonmoon = generatePlanet("resources/2k_moon.png", "moonmoon", 120, glm::vec3(0.2f, 0.2f, 0.2f), false, false);
+	 Planetoid* Moonmoon = generatePlanet("resources/2k_moon.png", "moonmoon", 120, glm::vec3(0.2f, 0.2f, 0.2f), false, false);
+
+	 Planetoid* Moonmoonmoon = generatePlanet("resources/2k_moon.png", "Moonmoonmoon", 120, glm::vec3(0.2f, 0.2f, 0.2f), false, false);
+
+	 Planetoid* Moonmoonmoonmoon = generatePlanet("resources/2k_moon.png", "Moonmoonmoonmoon", 120, glm::vec3(0.2f, 0.2f, 0.2f), false, false);
+
+	 Planetoid* Moonmoonmoonmoonmoon = generatePlanet("resources/2k_moon.png", "Moonmoonmoonmoonmoon", 120, glm::vec3(0.2f, 0.2f, 0.2f), false, false);
+
+	 Planetoid* Moonmoonmoonmoonmoonmoon = generatePlanet("resources/2k_moon.png", "Moonmoonmoonmoonmoonmoon", 120, glm::vec3(0.2f, 0.2f, 0.2f), false, false);
+
 
 	ManSatellite* mSatellite = generateSattelite("mSatellite", "models/sat/sat.obj", 120, glm::vec3(0.5f, 0.5f, 0.5f));
 
@@ -242,7 +252,16 @@ void init()
 
 	earth->add_sat(moon, 7, 87, noOffset);
 	moon->add_sat(mSatellite, 2, 120, noOffset);
-	//moon->add_sat(Moonmoon, 1, 120,noOffset);
+	moon->add_sat(Moonmoon, 1, 120,noOffset);
+	Moonmoon->add_sat(Moonmoonmoon, 1, 130, noOffset);
+
+	Moonmoonmoon->add_sat(Moonmoonmoonmoon, 1, 110, noOffset);
+
+	Moonmoonmoonmoon->add_sat(Moonmoonmoonmoonmoon, 1, 60, noOffset);
+
+	Moonmoonmoonmoonmoon->add_sat(Moonmoonmoonmoonmoonmoon, 1, 90, noOffset);
+
+
 
 	baseNode->add_sat(jupiter, 140, 23, glm::vec2(glm::radians(1.0f), 0));
 	jupiter->add_sat(jSattelite, 5, 120, noOffset);
@@ -323,6 +342,7 @@ void update(float timeMillis)
 	}
 }
 GLuint textureId;
+GLuint debugId;
 
 void generateBackGroundImage()
 {
@@ -349,6 +369,30 @@ void generateBackGroundImage()
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	stbi_image_free(imgData);
+
+
+	glGenTextures(1, &debugId);
+	glBindTexture(GL_TEXTURE_2D, debugId);
+
+	imgData = (char*)stbi_load("resources/TEST_TEXTURE.png", &width, &height, &bpp, 4);
+
+	glTexImage2D(GL_TEXTURE_2D,
+		0,
+		GL_RGBA,
+		width,
+		height,
+		0,
+		GL_RGBA,
+		GL_UNSIGNED_BYTE,
+		imgData
+	);
+	assert(imgData);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	//glBindTexture(GL_TEXTURE_2D, debugId);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	stbi_image_free(imgData);
+
 }
 
 void draw()
@@ -368,7 +412,14 @@ void draw()
 
 	tigl::shader->setProjectionMatrix(glm::ortho(-1, 1, -1, 1, 300, -3000));
 	tigl::shader->setViewMatrix(glm::lookAt(glm::vec3(0, 0, 7), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)));
-	glBindTexture(GL_TEXTURE_2D, textureId);
+
+	if(use_debug_background)
+	{
+		glBindTexture(GL_TEXTURE_2D, debugId);
+	}else
+	{
+		glBindTexture(GL_TEXTURE_2D, textureId);
+	}
 
 	float angle;
 
@@ -469,8 +520,8 @@ void draw()
 
 		ImGui::Begin("planet control");
 		ImGui::Text(selectedNode->get_name().c_str());
-		ImGui::SliderFloat("orbit speed", selectedNode->p_get_orbit_speed(), 0, 360);
-		ImGui::SliderFloat("rotation speed", selectedNode->p_get_rotation_speed(), 0, 360);
+		ImGui::SliderFloat("orbit speed", selectedNode->p_get_orbit_speed(), -360, 360);
+		ImGui::SliderFloat("rotation speed", selectedNode->p_get_rotation_speed(), -360, 360);
 
 		Planetoid* planetoid = dynamic_cast<Planetoid*>(selectedNode);
 
@@ -483,6 +534,12 @@ void draw()
 
 		ImGui::End();
 	}
+
+	ImGui::Begin("presentation settings");
+
+	ImGui::Checkbox("use debug background", &use_debug_background);
+
+	ImGui::End();
 
 	ImGui::Render();
 
