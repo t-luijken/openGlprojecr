@@ -1,11 +1,12 @@
 ﻿#include "Planetoid.h"
 
 #include <iostream>
+#include <GLFW/glfw3.h>
 
 #include "stb_image.h"
 #include "tigl.h"
 
-#define SCALE_FACTOR 10
+#define SCALE_FACTOR 5
 
 const float PI = (2 * acos(0.0));
 
@@ -45,6 +46,10 @@ bool contains_vertex_with_same_position(std::vector<tigl::Vertex*>* list, tigl::
 }
 void generateSphereVBO()
 {
+
+	float timeBefore = glfwGetTime();;
+	
+	
 	for (int longitude = 0; longitude < 180; longitude += SCALE_FACTOR)
 	{
 		float longRadians = glm::radians((float)longitude);
@@ -79,33 +84,35 @@ void generateSphereVBO()
 			float y_next_both = sin(longRadNext) * sin(latRadNext);
 			float z_next_both = cos(longRadNext);
 
-			float Rand_red = ((float)(rand() % 255)) / 255.0f;
-
-			float Rand_green = ((float)(rand() % 255)) / 255.0f;
-
-			float Rand_blue = ((float)(rand() % 255)) / 255.0f;
-
 			glm::vec3 normal = calculateNormal(glm::vec3(x, z, y), glm::vec3(x_next_long, z_next_long, y_next_long), glm::vec3(x_next_lat, z_next_lat, y_next_lat));
 
-			normal = normal * glm::vec3(-1, -1, -1);
+			//normal = normal * glm::vec3(-1, -1, -1);
 
-			vertices.push_back(tigl::Vertex::PTN(glm::vec3(x, z, y), glm::vec2(jColorA, 1 - iColorA), normal));
 
-			vertices.push_back(tigl::Vertex::PTN(glm::vec3(x_next_long, z_next_long, y_next_long), glm::vec2(jColorA, 1 - iColorB), normal));
+			glm::vec3 pos(x, z, y);
+			glm::vec3 posNextLong(x_next_long, z_next_long, y_next_long);
+			glm::vec3 posNextLat(x_next_lat, z_next_lat, y_next_lat);
+			glm::vec3 posNextBoth(x_next_both, z_next_both, y_next_both);
+			
 
-			vertices.push_back(tigl::Vertex::PTN(glm::vec3(x_next_lat, z_next_lat, y_next_lat), glm::vec2(jColorB, 1 - iColorA), normal));
+			vertices.push_back(tigl::Vertex::PTN(pos, glm::vec2(jColorA, 1 - iColorA), glm::normalize(pos)));
 
-			normal = calculateNormal(glm::vec3(x_next_both, z_next_both, y_next_both), glm::vec3(x_next_long, z_next_long, y_next_long), glm::vec3(x_next_lat, z_next_lat, y_next_lat));
+			vertices.push_back(tigl::Vertex::PTN(posNextLong, glm::vec2(jColorA, 1 - iColorB), glm::normalize(posNextLong)));
+
+			vertices.push_back(tigl::Vertex::PTN(posNextLat, glm::vec2(jColorB, 1 - iColorA), glm::normalize(posNextLat)));
+
+			//normal = calculateNormal(posNextBoth, glm::vec3(x_next_long, z_next_long, y_next_long), glm::vec3(x_next_lat, z_next_lat, y_next_lat));
 
 			//  normal = normal * glm::vec3(-1, -1, -1);
 
-			vertices.push_back(tigl::Vertex::PTN(glm::vec3(x_next_long, z_next_long, y_next_long), glm::vec2(jColorA, 1 - iColorB), normal));
+			vertices.push_back(tigl::Vertex::PTN(posNextLong, glm::vec2(jColorA, 1 - iColorB), glm::normalize(posNextLong)));
 
-			vertices.push_back(tigl::Vertex::PTN(glm::vec3(x_next_lat, z_next_lat, y_next_lat), glm::vec2(jColorB, 1 - iColorA), normal));
+			vertices.push_back(tigl::Vertex::PTN(posNextLat, glm::vec2(jColorB, 1 - iColorA), glm::normalize(posNextLat)));
 
-			vertices.push_back(tigl::Vertex::PTN(glm::vec3(x_next_both, z_next_both, y_next_both), glm::vec2(jColorB, 1 - iColorB), normal));
+			vertices.push_back(tigl::Vertex::PTN(posNextBoth, glm::vec2(jColorB, 1 - iColorB), glm::normalize(posNextBoth)));
 		}
 	}
+	/*
 	std::vector<tigl::Vertex*> calculated;
 
 	for (int i = 0; i < vertices.size(); ++i)
@@ -142,8 +149,16 @@ void generateSphereVBO()
 			}
 		}
 	}
+	*/
 
 	vbo = tigl::createVbo(vertices);
+
+	float timeAfter = glfwGetTime();
+
+	float calcTime = timeAfter - timeBefore;
+
+	std::cout << "time taken: " << calcTime << std::endl;
+	
 }
 
 GLuint rTexID;

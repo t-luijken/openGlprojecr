@@ -62,7 +62,7 @@ namespace spaceShip
 
 	void init_ship()
 	{
-		model = new ObjModel("models/ship 2/ship_2.obj");
+		model = new ObjModel("models/ship/shipA_OBJ.obj");
 		position = glm::vec3(20, 0, 0);
 		rotationAngles = glm::vec3(0, 0, 0);
 		scale = glm::vec3(0.1f, 0.1f, 0.1f);

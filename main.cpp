@@ -216,7 +216,7 @@ void init()
 
 	Planetoid* moon = generatePlanet("resources/2k_moon.png", "moon", 48, glm::vec3(0.3f, 0.3f, 0.3f), false, false);
 
-	 Planetoid* Moonmoon = generatePlanet("resources/2k_moon.png", "moonmoon", 120, glm::vec3(0.2f, 0.2f, 0.2f), false, false);
+	/* Planetoid* Moonmoon = generatePlanet("resources/2k_moon.png", "moonmoon", 120, glm::vec3(0.2f, 0.2f, 0.2f), false, false);
 
 	 Planetoid* Moonmoonmoon = generatePlanet("resources/2k_moon.png", "Moonmoonmoon", 120, glm::vec3(0.2f, 0.2f, 0.2f), false, false);
 
@@ -224,7 +224,7 @@ void init()
 
 	 Planetoid* Moonmoonmoonmoonmoon = generatePlanet("resources/2k_moon.png", "Moonmoonmoonmoonmoon", 120, glm::vec3(0.2f, 0.2f, 0.2f), false, false);
 
-	 Planetoid* Moonmoonmoonmoonmoonmoon = generatePlanet("resources/2k_moon.png", "Moonmoonmoonmoonmoonmoon", 120, glm::vec3(0.2f, 0.2f, 0.2f), false, false);
+	 Planetoid* Moonmoonmoonmoonmoonmoon = generatePlanet("resources/2k_moon.png", "Moonmoonmoonmoonmoonmoon", 120, glm::vec3(0.2f, 0.2f, 0.2f), false, false);*/
 
 
 	ManSatellite* mSatellite = generateSattelite("mSatellite", "models/sat/sat.obj", 120, glm::vec3(0.5f, 0.5f, 0.5f));
@@ -252,14 +252,14 @@ void init()
 
 	earth->add_sat(moon, 7, 87, noOffset);
 	moon->add_sat(mSatellite, 2, 120, noOffset);
-	moon->add_sat(Moonmoon, 1, 120,noOffset);
-	Moonmoon->add_sat(Moonmoonmoon, 1, 130, noOffset);
+	//moon->add_sat(Moonmoon, 1, 120,noOffset);
+	//Moonmoon->add_sat(Moonmoonmoon, 1, 130, noOffset);
 
-	Moonmoonmoon->add_sat(Moonmoonmoonmoon, 1, 110, noOffset);
+	//Moonmoonmoon->add_sat(Moonmoonmoonmoon, 1, 110, noOffset);
 
-	Moonmoonmoonmoon->add_sat(Moonmoonmoonmoonmoon, 1, 60, noOffset);
+	//Moonmoonmoonmoon->add_sat(Moonmoonmoonmoonmoon, 1, 60, noOffset);
 
-	Moonmoonmoonmoonmoon->add_sat(Moonmoonmoonmoonmoonmoon, 1, 90, noOffset);
+	//Moonmoonmoonmoonmoon->add_sat(Moonmoonmoonmoonmoonmoon, 1, 90, noOffset);
 
 
 
